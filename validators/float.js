@@ -1,31 +1,18 @@
 pureform().registerValidator("float", (function () {
 
-    var param_defaults = {
-        "min": null,
-        "max": null
-    };
-
     /**
+     * Validate value to be a float.
      *
+     * @param value (boolean)
+     *
+     * @return (boolean)
      */
-    function setup (params)
+    this.validate = function (value)
     {
 
-    }
-
-    function validate (response)
-    {
-
-        return response;
+        alert("VALIDATE");
+        return value === true;
 
     }
-
-    return (function () {
-
-        return {
-            "setup": setup,
-        };
-
-    });
 
 })());

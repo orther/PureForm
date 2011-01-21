@@ -5,7 +5,7 @@
         <title>PureForm Functional Test</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <!-- <link rel="stylesheet" href="/css/think-done.css" type="text/css"> -->
-        <script src="/js/remoteActionHandler.js" type="text/javascript"></script>
+        <script src="../../pureform.js" type="text/javascript"></script>
     </head>
     <body>
 
@@ -47,13 +47,20 @@
 
         <script type="text/javascript">
         var edit_user_form = pureform.create("edit_user").addFields({
-            "first_name":           {type: "string"},
-            "last_name":            {type: "string"},
+            "first_name":           {type: "string", submitValue: false},
+            "last_name":            {type: "string", submitValue: false},
             "cool_level":           {type: "integer", min: 1, max: 5},
             "cash_flow":            {type: "float", min: 0, max: 9999999.99, precision: 2},
-            "macking_otta_control": {type: "boolean", typeFunction: function (raw_value) {
+            "macking_otta_control": {type: "boolean", typeFunction: function (rawValue) {
                 return (raw_value === "1");
             }}
+        }).addAggregates({
+            "full_name": { aggregateFunction: function (formValues) {
+                return {
+                    "full_name_string": formValues("first_name") + " " + formValues("last_name"),
+                    "first_name":       formValues("first_name"),
+                    "last_name":        formValues("last_name")
+            },
         }).addSubmitButtons(["submit_1","submit_2"]);
         </script>
 

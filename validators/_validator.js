@@ -26,3 +26,9 @@ pureform().assignValidatorPrototype(function () {
     }
 
 });
+
+
+
+pureform("edit_user").addFields({
+    "first-name": {type: "string", submitValue: true}
+});

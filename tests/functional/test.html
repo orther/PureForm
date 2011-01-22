@@ -46,7 +46,7 @@
         <button id="submit_2">Submit</button>
 
         <script type="text/javascript">
-        var edit_user_form = pureform.create("edit_user").addFields({
+        var edit_user_form = pureForm().create("edit_user").addFields({
             "first_name": {type: "string", submitValue: false},
             "last_name":  {type: "string", submitValue: false},
             "cool_level": {type: "integer", min: 1, max: 5},
@@ -54,16 +54,15 @@
             "is_macking": {type: "boolean", typeFunction: function (rawValue) {
                 return (raw_value === "1");
             }}
-        }).addAggregates({
+        }); /*.addAggregates({
             "full_name": { aggregateFunction: function (formValues) {
                 return {
                     "full_name_string": formValues("first_name") + " " + formValues("last_name"),
                     "first_name":       formValues("first_name"),
                     "last_name":        formValues("last_name")
             }}
-        }).addSubmitButtons(["submit_1","submit_2"]);
+        }); /*.addSubmitButtons(["submit_1","submit_2"]); /**/
         </script>
 
     </body>
 </html>
-

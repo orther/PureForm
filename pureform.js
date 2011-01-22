@@ -34,7 +34,7 @@ var pureForm = (function () {
      */
     function get (name) {
 
-        if (!name in _forms)
+        if (!(name in _forms))
             throw "PureForm::get() >> Failed, form named `" + name + "` does not exist.";
 
         return _forms[name];

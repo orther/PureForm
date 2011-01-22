@@ -1,13 +1,11 @@
-var test_form = null;
-
 module("PureForm");
 test("create()", function () {
-    ok(function () { return pureForm().create("test_form"); }, "Create test_form");
-    raises(function () { pureForm().create("test_form"); pureForm().create("test_form"); }, "Throw error on attempt to create test_form when it already exists");
+    ok(pureForm().create("create()_1"), "Create test_form");
+    raises(function () { pureForm().create("create()_2"); pureForm().create("create()_2"); }, "Throw error on attempt to create test_form when it already exists");
 
 });
 
 test("get()", function () {
-   same(pureForm().create("test_form"), pureForm().get("test_form"), "Get test_form");
+    equal(pureForm().create("get()_1"), pureForm().get("get()_1"), "Create form and get it.");
+    raises(function () { pureForm().get("get()_2"); }, "Throw error on attempt to get test_form when it already exists");
 });
-

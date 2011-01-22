@@ -1,140 +1,43 @@
-var pureform = (function () {
+var pureForm = (function () {
 
     var
-        _fields              = {},
-        _validator_prototype = null,
-        _validators          = {};
+        _forms = {};
 
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Create field object and add it to the field stack if it doesn't already exist.
+     * Create new PureForm form and added it to internal form registry. Throw an error if form with name already exists.
      *
-     * @param field_name (string)
+     * @param name (string)
+     *
+     * @return (object) PureForm form object.
      */
-    function _addField (field_name)
-    {
+    function create (name) {
 
-        if (!field_name in _fields) {
+        if (name in _forms)
+            throw "PureForm::create() >> Failed, form named `" + name + "` already exist.";
 
-            // add field
-            _fields[field_name] = {
-                "validators": []
-            }
+        _forms[name] = {};
 
-        }
+        return _forms[name];
 
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Assign validator to a field.
+     * Return existing PureForm form object. Throw an error if form with name doesn't exists.
      *
-     * @param validator_prototype (function) The validator prototype.
+     * @param name (string)
+     *
+     * @return (object) PureForm form object.
      */
-    function _assignValidatorToField (field_name, validator_name, validator_params)
-    {
+    function get (name) {
 
-        // validate params
-        if (!field_name in _fields)
-            throw "PureForm::_assignValidatorToField :: field_name `" + field_name + "` doesn't exist in the field stack";
+        if (!name in _forms)
+            throw "PureForm::get() >> Failed, form named `" + name + "` does not exist.";
 
-        // validate params
-        if (!validator_name in _validators)
-            throw "PureForm::_assignValidatorToField :: field_name `" + field_name + "` doesn't exist in the field stack";
-
-        // create validator
-
-        // add validator to field
-        _fields[field_name].validators.push();
-
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Assign the validator prototype.
-     *
-     * @param validator_prototype (function) The validator prototype.
-     */
-    function assignValidatorPrototype (validator_prototype)
-    {
-
-        _validator_prototype = validator_prototype;
-
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Register a PureForm validator.
-     *
-     * @param name      (string)
-     * @param validator (function) The validator closure function.
-     */
-    function isValidatorRegistered (name, validator) {
-
-        return name in _validators;
-
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Register a PureForm validator.
-     *
-     * @param name      (string)
-     * @param validator (function) The validator closure function.
-     */
-    function registerValidator (name, validator) {
-
-        _validators[name] = validator;
-
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Setup PureForm instance settings.
-     *
-     * NOTE: You can run setup multiple times to add more validators.
-     *
-     * @param params (array)
-     */
-    function setup (params) {
-
-        if (typeof params != "object")
-            throw "PureForm::setup :: No valid params passed";
-
-        if (params.validators instanceof Array) {
-
-            if (!0 in params.validators)
-                throw "PureForm::setup :: Field name missing from validator item: ";
-
-            if (!1 in params.validators)
-                throw "PureForm::setup :: Validator name missing from validator item: ";
-
-            if (!2 in params.validators)
-                var validator_params = null;
-
-            // add validators to fields
-            _assignValidatorToField(field_name, validator_name, validator_params);
-
-        }
-
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Unregister a PureForm validator.
-     *
-     * @param name      (string)
-     */
-    function unregisterValidator (name, validator) {
-
-        delete _validators[name];
+        return _forms[name];
 
     }
 
@@ -145,9 +48,8 @@ var pureform = (function () {
 
         return {
             // validator
-            "isValidatorRegistered": isValidatorRegistered,
-            "registerValidator":     registerValidator,
-            "unregisterValidator":   unregisterValidator
+            "create": create,
+            "get":    get
         };
 
     });

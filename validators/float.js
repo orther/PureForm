@@ -1,3 +1,4 @@
+/*
 pureform().registerValidator("float", (function () {
 
     /**
@@ -7,7 +8,7 @@ pureform().registerValidator("float", (function () {
      *
      * @return (boolean)
      */
-    this.validate = function (value)
+  /*  this.validate = function (value)
     {
 
         alert("VALIDATE");
@@ -16,3 +17,4 @@ pureform().registerValidator("float", (function () {
     }
 
 })());
+*/

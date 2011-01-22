@@ -125,7 +125,9 @@ var pureForm = (function () {
             if (button == null)
                 throw "PureForm::form::attachSubmitButton() >> Failed, element with id `" + button_id + "` doesn't exist.";
 
-            button.addEventListener('click', this.submit, false);
+            var _this = this;
+
+            button.addEventListener('click', function (e) { _this.submit(); }, false);
 
             return this;
 
@@ -255,10 +257,9 @@ var pureForm = (function () {
          *      - call custom onInvalid/onValid function
          *      - call onSubmitComplete
          */
-        this.submit = function () {
+        this.submit = function (form_object) {
 
-            alert("TEST submit()");
-
+            console.log(this);
             if (typeof this._onSubmit == "function")
                 // call custom onSubmit function
                 this._onSubmit();

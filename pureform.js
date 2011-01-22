@@ -104,6 +104,41 @@ var pureForm = (function () {
 
         };
 
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Attach button to form submit()
+         *
+         * @param button_id (string)
+         *
+         * @return (object) Returns this object to allow chaining.
+         */
+        this.attachSubmitButton = function (button_id) {
+
+            // TODO: Add event listener to trigger submit functionality
+
+            return this;
+
+        };
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Attach multiple buttons to form submit()
+         *
+         * @param button_ids (Array)
+         *
+         * @return (object) Returns this object to allow chaining.
+         */
+        this.attachSubmitButtons = function (button_ids) {
+
+            for (button_id in button_ids)
+                this.attachSubmitButton(button_id);
+
+            return this;
+
+        };
+
     };
 
     // -----------------------------------------------------------------------------------------------------------------

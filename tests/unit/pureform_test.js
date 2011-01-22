@@ -32,6 +32,34 @@ module("PureForm::form");
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+test("addAggregate()", function () {
+
+    // setup
+    pureForm().create("addAggregate()_1");
+
+    //tests
+    ok(pureForm().get("addAggregate()_1").addAggregate("aggregate_1", {}), "Add aggregate to form.");
+
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+test("addAggregates()", function () {
+
+    // setup
+    pureForm().create("addAggregates()_1");
+    var test_aggregates = {
+        "aggregate_1": {},
+        "aggregate_2": {}
+    }
+
+    //tests
+    ok(pureForm().get("addAggregates()_1").addAggregates(test_aggregates), "Add multiple aggregates to form.");
+
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 test("addField()", function () {
 
     // setup

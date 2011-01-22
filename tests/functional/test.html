@@ -54,12 +54,13 @@
             "is_macking": {type: "boolean", typeFunction: function (rawValue) {
                 return (raw_value === "1");
             }}
-        }); /*.addAggregates({
+        }).addAggregates({
             "full_name": { aggregateFunction: function (formValues) {
                 return {
                     "full_name_string": formValues("first_name") + " " + formValues("last_name"),
                     "first_name":       formValues("first_name"),
                     "last_name":        formValues("last_name")
+                }
             }}
         }); /*.addSubmitButtons(["submit_1","submit_2"]); /**/
         </script>

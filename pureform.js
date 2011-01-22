@@ -119,7 +119,13 @@ var pureForm = (function () {
          */
         this.attachSubmitButton = function (button_id) {
 
-            // TODO: Add event listener to trigger submit functionality
+            // attach button click event to the submit function
+            var button = document.getElementById(button_id);
+
+            if (button == null)
+                throw "PureForm::form::attachSubmitButton() >> Failed, element with id `" + button_id + "` doesn't exist.";
+
+            button.addEventListener('click', this.submit, false);
 
             return this;
 
@@ -136,8 +142,42 @@ var pureForm = (function () {
          */
         this.attachSubmitButtons = function (button_ids) {
 
-            for (button_id in button_ids)
-                this.attachSubmitButton(button_id);
+            if (typeof button_ids != "object" || !(button_ids instanceof Array))
+                throw "PureForm::form::attachSubmitButtons() >> Failed, `button_ids` is not an instance of Array";
+
+            for (i in button_ids) {
+
+                try {
+
+                    this.attachSubmitButton(button_ids[i]);
+
+                } catch (e) {
+
+                    throw "PureForm::form::attachSubmitButtons() >> Failed, element with id `" + button_ids[i] + "` doesn't exist.";
+
+                }
+
+            }
+
+            return this;
+
+        };
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Add custom onInvalid function
+         *
+         * @param onInvalid (function)
+         *
+         * @return (object) Returns this object to allow chaining.
+         */
+        this.onInvalid = function (onInvalid) {
+
+            if (typeof onInvalid != "function")
+                throw "PureForm::form::onInvalid() >> Failed, onInvalid param must be a function and is not.";
+
+            this._onInvalid = onInvalid;
 
             return this;
 
@@ -166,6 +206,46 @@ var pureForm = (function () {
         // -------------------------------------------------------------------------------------------------------------
 
         /**
+         * Add custom onSubmitComplete function
+         *
+         * @param onSubmitComplete (function)
+         *
+         * @return (object) Returns this object to allow chaining.
+         */
+        this.onSubmitComplete = function (onSubmitComplete) {
+
+            if (typeof onSubmitComplete != "function")
+                throw "PureForm::form::onSubmitComplete() >> Failed, onSubmitComplete param must be a function and is not.";
+
+            this._onSubmitComplete = onSubmitComplete;
+
+            return this;
+
+        };
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Add custom onValid function
+         *
+         * @param onValid (function)
+         *
+         * @return (object) Returns this object to allow chaining.
+         */
+        this.onValid = function (onValid) {
+
+            if (typeof onValid != "function")
+                throw "PureForm::form::onValid() >> Failed, onValid param must be a function and is not.";
+
+            this._onValid = onValid;
+
+            return this;
+
+        };
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
          * Submit this form which entails:
          *      - call custom onSubmit function
          *      - collect field values
@@ -177,7 +257,11 @@ var pureForm = (function () {
          */
         this.submit = function () {
 
-            // call onSubmit
+            alert("TEST submit()");
+
+            if (typeof this._onSubmit == "function")
+                // call custom onSubmit function
+                this._onSubmit();
 
             // collect field values
 

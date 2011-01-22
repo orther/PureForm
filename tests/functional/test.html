@@ -9,6 +9,10 @@
     </head>
     <body>
 
+        <h1>PureForm Functional Test</h1>
+
+        <h2>Form</h2>
+
         <button id="submit_1">Submit</button>
 
         <ul>
@@ -45,6 +49,12 @@
 
         <button id="submit_2">Submit</button>
 
+        <h2>Submission Details</h2>
+
+        <ul id="submission-details">
+
+        </ul>
+
         <script type="text/javascript">
         var edit_user_form = pureForm().create("edit_user").addFields({
             "first_name": {type: "string", submitValue: false},
@@ -64,14 +74,24 @@
             }}
         }).onSubmit(function () {
             // triggered immediatly when form submitted
+            var details = document.getElementById("submission-details");
 
-        })/*.onValid(function () {
+            details.innerHTML = "<li>onSubmit Called</li>";
+
+        }).onValid(function () {
             // triggered after validation if all fields are valid
+            var details = document.getElementById("submission-details");
+
+            details.innerHTML += "<li>onSubmit Called</li>";
+
 
         }).onInvalid(function () {
             // triggered after validation if invalid field(s)
 
-        })*/.attachSubmitButtons(["submit_1","submit_2"]);
+        }).onSubmitComplete(function () {
+            // triggered after onValid or onInvalid.
+
+        }).attachSubmitButtons(["submit_1","submit_2"]);
         </script>
 
     </body>

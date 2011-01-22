@@ -113,6 +113,18 @@ test("attachSubmitButtons()", function () {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+test("onInvalid()", function () {
+
+    // setup
+    pureForm().create("onInvalid()_1");
+
+    //tests
+    ok(pureForm().get("onInvalid()_1").onInvalid(function () {  }), "Set custom onInvalid() function")
+
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 test("onSubmit()", function () {
 
     // setup
@@ -120,6 +132,30 @@ test("onSubmit()", function () {
 
     //tests
     ok(pureForm().get("onSubmit()_1").onSubmit(function () {  }), "Set custom onSubmit() function")
+
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+test("onSubmitComplete()", function () {
+
+    // setup
+    pureForm().create("onSubmitComplete()_1");
+
+    //tests
+    ok(pureForm().get("onSubmitComplete()_1").onSubmitComplete(function () {  }), "Set custom onSubmitComplete() function")
+
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+test("onValid()", function () {
+
+    // setup
+    pureForm().create("onValid()_1");
+
+    //tests
+    ok(pureForm().get("onValid()_1").onValid(function () {  }), "Set custom onValid() function")
 
 });
 

@@ -110,3 +110,19 @@ test("attachSubmitButtons()", function () {
     ok(pureForm().get("attachSubmitButtons()_1").attachSubmitButtons(test_buttons), "Attach multiple buttons to submit()");
 
 });
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+test("onSubmit()", function () {
+
+    // setup
+    pureForm().create("onSubmit()_1");
+
+    //tests
+    ok(pureForm().get("onSubmit()_1").onSubmit(function () {  }), "Set custom onSubmit() function")
+
+});
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+

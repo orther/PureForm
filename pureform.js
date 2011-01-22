@@ -9,8 +9,12 @@ var pureForm = (function () {
      */
     function formObject () {
 
-        this._aggregates  = {};
-        this._fields      = {};
+        this._aggregates       = {};
+        this._fields           = {};
+        this._onInvalid        = null;
+        this._onSubmit         = null;
+        this._onSubmitComplete = null;
+        this._onValid          = null;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -142,6 +146,26 @@ var pureForm = (function () {
         // -------------------------------------------------------------------------------------------------------------
 
         /**
+         * Add custom onSubmit function
+         *
+         * @param onSubmit (function)
+         *
+         * @return (object) Returns this object to allow chaining.
+         */
+        this.onSubmit = function (onSubmit) {
+
+            if (typeof onSubmit != "function")
+                throw "PureForm::form::onSubmit() >> Failed, onSubmit param must be a function and is not.";
+
+            this._onSubmit = onSubmit;
+
+            return this;
+
+        };
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
          * Submit this form which entails:
          *      - call custom onSubmit function
          *      - collect field values
@@ -149,7 +173,7 @@ var pureForm = (function () {
          *      - build aggregate values
          *      - validate aggregate values
          *      - call custom onInvalid/onValid function
-         *      - call onSubmitted
+         *      - call onSubmitComplete
          */
         this.submit = function () {
 
@@ -165,7 +189,7 @@ var pureForm = (function () {
 
             // call custom onInvalid/onValid funtion
 
-            // call onSubmitted
+            // call onSubmitComplete
 
         };
 

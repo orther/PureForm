@@ -139,6 +139,36 @@ var pureForm = (function () {
 
         };
 
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Submit this form which entails:
+         *      - call custom onSubmit function
+         *      - collect field values
+         *      - validate field values
+         *      - build aggregate values
+         *      - validate aggregate values
+         *      - call custom onInvalid/onValid function
+         *      - call onSubmitted
+         */
+        this.submit = function () {
+
+            // call onSubmit
+
+            // collect field values
+
+            // validate field values
+
+            // build aggregate values
+
+            // validate aggregate values
+
+            // call custom onInvalid/onValid funtion
+
+            // call onSubmitted
+
+        };
+
     };
 
     // -----------------------------------------------------------------------------------------------------------------

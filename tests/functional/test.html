@@ -62,6 +62,15 @@
                     "last_name":        formValues("last_name")
                 }
             }}
+        }).onSubmit(function () {
+            // triggered immediatly when form submitted
+
+        }).onValid(function () {
+            // triggered after validation if all fields are valid
+
+        }).onInvalid(function () {
+            // triggered after validation if invalid field(s)
+
         }).attachSubmitButtons(["submit_1","submit_2"]); /**/
         </script>
 

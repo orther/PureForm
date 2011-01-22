@@ -4,8 +4,12 @@
     <head>
         <title>PureForm Functional Test</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" type="text/css" media="screen">
+        <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
         <!-- <link rel="stylesheet" href="/css/think-done.css" type="text/css"> -->
         <script src="../../pureform.js" type="text/javascript"></script>
+        <!-- Your tests file goes here -->
+        <script type="text/javascript" src="../unit/pureform_test.js"></script>
     </head>
     <body>
 
@@ -55,6 +59,13 @@
 
         </ul>
 
+        <!-- Unit Testing -->
+        <h1 id="qunit-header">QUnit Test Suite</h1>
+        <h2 id="qunit-banner"></h2>
+        <div id="qunit-testrunner-toolbar"></div>
+        <h2 id="qunit-userAgent"></h2>
+        <ol id="qunit-tests"></ol>
+
         <script type="text/javascript">
         var edit_user_form = pureForm().create("edit_user").addFields({
             "first_name": {type: "string", submitValue: false},
@@ -90,6 +101,10 @@
 
         }).onSubmitComplete(function () {
             // triggered after onValid or onInvalid.
+            var details = document.getElementById("submission-details");
+
+            details.innerHTML += "<li>onSubmitComplete Called</li>";
+
 
         }).attachSubmitButtons(["submit_1","submit_2"]);
         </script>

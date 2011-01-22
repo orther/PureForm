@@ -94,7 +94,7 @@ test("attachSubmitButton()", function () {
     pureForm().create("attachSubmitButton()_1");
 
     //tests
-    ok(pureForm().get("attachSubmitButton()_1").attachSubmitButton("button_1"), "Attach button to submit()")
+    ok(pureForm().get("attachSubmitButton()_1").attachSubmitButton("submit_1"), "Attach button to submit()")
 
 });
 
@@ -104,7 +104,7 @@ test("attachSubmitButtons()", function () {
 
     // setup
     pureForm().create("attachSubmitButtons()_1");
-    var test_buttons = ["button_1", "button_2"];
+    var test_buttons = ["submit_1", "submit_2"];
 
     //tests
     ok(pureForm().get("attachSubmitButtons()_1").attachSubmitButtons(test_buttons), "Attach multiple buttons to submit()");

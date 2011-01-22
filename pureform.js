@@ -259,7 +259,6 @@ var pureForm = (function () {
          */
         this.submit = function (form_object) {
 
-            console.log(this);
             if (typeof this._onSubmit == "function")
                 // call custom onSubmit function
                 this._onSubmit();
@@ -274,7 +273,9 @@ var pureForm = (function () {
 
             // call custom onInvalid/onValid funtion
 
-            // call onSubmitComplete
+            if (typeof this._onSubmitComplete == "function")
+                // call custom onSubmitComplete function
+                this._onSubmitComplete();
 
         };
 

@@ -13,7 +13,7 @@
     </head>
     <body>
 
-        <h1>PureForm Functional Test</h1>
+        <h1 id="heading">PureForm Functional Test</h1>
 
         <h2>Form</h2>
 
@@ -49,6 +49,16 @@
                 <label for="is_macking">Straight Macking Outta Control</label>
                 <input id="is_macking" type="checkbox" value="1">
             </li>
+            <li>
+                <label for="description">Description</label>
+                <textarea id="description">Dude's doing it.</textarea>
+            </li>
+            <li>
+                <label for="sex">Sex</label><br>
+                <input type="radio" name="sex" value="Male" id="sex_male"><label for="sex_male">Male</label><br>
+                <input type="radio" name="sex" value="Female" id="sex_female"><label for="sex_female">Female</label>
+            </li>
+
         </ul>
 
         <button id="submit_2">Submit</button>
@@ -69,13 +79,15 @@
         <!-- Functional Testing JS -->
         <script type="text/javascript">
         var edit_user_form = pureForm().create("edit_user").addFields({
-            "first_name": {type: "string", submitValue: false},
-            "last_name":  {type: "string", submitValue: false},
+            "first_name": {type: "string"},
+            "last_name":  {type: "string"}
+/*
             "cool_level": {type: "integer", min: 1, max: 5},
             "cash_flow":  {type: "float", min: 0, max: 9999999.99, precision: 2},
             "is_macking": {type: "boolean", typeFunction: function (rawValue) {
                 return (raw_value === "1");
             }}
+*/
         }).addAggregates({
             "full_name": { aggregateFunction: function (formValues) {
                 return {

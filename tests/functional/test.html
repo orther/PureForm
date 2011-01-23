@@ -66,6 +66,7 @@
         <h2 id="qunit-userAgent"></h2>
         <ol id="qunit-tests"></ol>
 
+        <!-- Functional Testing JS -->
         <script type="text/javascript">
         var edit_user_form = pureForm().create("edit_user").addFields({
             "first_name": {type: "string", submitValue: false},
@@ -93,18 +94,19 @@
             // triggered after validation if all fields are valid
             var details = document.getElementById("submission-details");
 
-            details.innerHTML += "<li>onSubmit Called</li>";
-
+            details.innerHTML += "<li>onValid Called</li>";
 
         }).onInvalid(function () {
             // triggered after validation if invalid field(s)
+            var details = document.getElementById("submission-details");
+
+            details.innerHTML += "<li>onInvalid Called</li>";
 
         }).onSubmitComplete(function () {
             // triggered after onValid or onInvalid.
             var details = document.getElementById("submission-details");
 
             details.innerHTML += "<li>onSubmitComplete Called</li>";
-
 
         }).attachSubmitButtons(["submit_1","submit_2"]);
         </script>

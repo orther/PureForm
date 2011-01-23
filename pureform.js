@@ -7,7 +7,7 @@ var pureForm = (function () {
     /**
      * The form object all created forms are based created from.
      */
-    function formObject () {
+    function _formObject () {
 
         this._aggregates       = {};
         this._fields           = {};
@@ -295,7 +295,7 @@ var pureForm = (function () {
         if (name in _forms)
             throw "PureForm::create() >> Failed, form named `" + name + "` already exist.";
 
-        _forms[name] = new formObject;
+        _forms[name] = new _formObject;
 
         return _forms[name];
 
@@ -333,3 +333,31 @@ var pureForm = (function () {
     });
 
 })();
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * PureForm base Error.
+ *
+ * @param params (object)
+ */
+function pureFormError (params) {
+
+    this.code    = null;
+    this.data    = null;
+    this.message = null;
+
+    if (typeof params == "object") {
+
+        if (typeof params.code != "undefined")
+            this.code = params.code;
+
+        if (typeof params.data != "undefined")
+            this.data = params.data;
+
+        if (typeof params.message != "undefined")
+            this.message = params.message;
+
+    }
+
+}

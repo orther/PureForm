@@ -1,5 +1,6 @@
-function pureFormType {
+function pureFormType () {
 
+    // custom functions
     this.getFieldType  = null;
     this.getFieldValue = null;
     this.typeCast      = null;
@@ -163,7 +164,7 @@ function pureFormType {
 
             // -----------------------------------------------------------------------------------------------------------------
 
-            case "INPUT_RADIO"
+            case "INPUT_RADIO":
                 var fields = document.getElementsByName(element.name);
 
                 for (i in fields) {
@@ -186,7 +187,7 @@ function pureFormType {
 
             // -----------------------------------------------------------------------------------------------------------------
 
-            case "SELECT"
+            case "SELECT":
                 var value = element.value;
 
                 if (typeof value != "string")
@@ -209,7 +210,7 @@ function pureFormType {
 
         }
 
-        throw new pureFormTypeErrorNoCollectorForType();
+        throw pureFormTypeErrorNoCollectorForType();
 
     }
 
@@ -234,7 +235,7 @@ function pureFormType {
         var type = this.__getFieldType(field);
 
         // get field value
-        var value = this.__getFieldValue(field);
+        var value = this.__getFieldValue(field, type);
 
         return value;
 
@@ -263,52 +264,71 @@ function pureFormType {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-// EXCEPTIONS
+// ERRORS
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
  * This is the base error that all other pureFormType errors are based.
+ *
+ * @param params (object)
+ *
+ * @return (function)
  */
-var pureFormTypeError = new pureFormError;
+function pureFormTypeError () {
+
+    return function (params) {
+        this.code    = null;
+        this.data    = null;
+        this.message = null;
+
+        if (typeof params == "object") {
+
+            if (typeof params.code != "undefined")
+                this.code = params.code;
+
+            if (typeof params.data != "undefined")
+                this.data = params.data;
+
+            if (typeof params.message != "undefined")
+                this.message = params.message;
+
+        }
+
+    };
+
+}
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
  * This error is thrown when a field element with the set ID does not exist.
  */
-var pureFormTypeErrorElementDoesNotExist = new pureFormTypeError;
+var pureFormTypeErrorElementDoesNotExist = new pureFormError();
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
  * This error is thrown when the type class doesn't provide a typeCast method.
  */
-var pureFormTypeErrorMissingTypeCastMethod = new pureFormTypeError;
+var pureFormTypeErrorMissingTypeCastMethod = new pureFormError();
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
  * This error is thrown when a collector for the element type doesn't exist.
  */
-var pureFormTypeErrorNoCollectorForType = new pureFormTypeError;
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This error is thrown when a collector for the element type doesn't exist.
- */
-var pureFormTypeErrorNoCollectorForType = new pureFormTypeError;
+var pureFormTypeErrorNoCollectorForType = new pureFormError();
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
  * This error is thrown when an element's type can not be determined.
  */
-var pureFormTypeErrorUndeterminedType = new pureFormTypeError;
+var pureFormTypeErrorUndeterminedType = new pureFormError();
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
  * This error is thrown when a collector fails to collect value from field.
  */
-var pureFormTypeErrorValueCollectionFailed = new pureFormTypeError;
+var pureFormTypeErrorValueCollectionFailed = new pureFormError();

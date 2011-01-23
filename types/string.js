@@ -1,7 +1,9 @@
 var pureFormTypeString = new pureFormType;
 
-pureFormTypeBoolean.typeCast = function (raw_value) {
+pureFormTypeString.typeCast = function (raw_value) {
 
     return String(raw_value);
 
 }
+
+pureForm().registerType("string", pureFormTypeString);

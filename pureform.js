@@ -1,20 +1,23 @@
 var pureForm = (function () {
 
     var _forms = {};
+    var _types = {};
 
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * The form object all created forms are based created from.
      */
-    function _formObject () {
+    function _formObject (pureForm) {
 
-        this._aggregates       = {};
-        this._fields           = {};
-        this._onInvalid        = null;
-        this._onSubmit         = null;
-        this._onSubmitComplete = null;
-        this._onValid          = null;
+        this.__aggregates       = {};
+        this.__fields           = {};
+        this.__fieldValues      = {};
+        this.__onInvalid        = null;
+        this.__onSubmit         = null;
+        this.__onSubmitComplete = null;
+        this.__onValid          = null;
+        this.__pureForm         = pureForm;
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -31,14 +34,14 @@ var pureForm = (function () {
             if (typeof name != "string")
                 throw "pureForm::addAggregate >> `name` not a string";
 
-            if (name in this._aggregates)
+            if (name in this.__aggregates)
                 throw "pureForm::addAggregate >> Aggregate with name `" + name + "` already exists";
 
             if (typeof params != "object")
                 throw "pureForm::addAggregate >> `params` not an object";
 
             // add field
-            this._aggregates[name] = params;
+            this.__aggregates[name] = params;
 
             return this;
 
@@ -77,14 +80,14 @@ var pureForm = (function () {
             if (typeof name != "string")
                 throw "pureForm::addField >> `name` not a string";
 
-            if (name in this._fields)
+            if (name in this.__fields)
                 throw "pureForm::addField >> Field with name `" + name + "` already exists";
 
             if (typeof params != "object")
                 throw "pureForm::addField >> `params` not an object";
 
             // add field
-            this._fields[name] = params;
+            this.__fields[name] = params;
 
             return this;
 
@@ -179,7 +182,7 @@ var pureForm = (function () {
             if (typeof onInvalid != "function")
                 throw "PureForm::form::onInvalid() >> Failed, onInvalid param must be a function and is not.";
 
-            this._onInvalid = onInvalid;
+            this.__onInvalid = onInvalid;
 
             return this;
 
@@ -199,7 +202,7 @@ var pureForm = (function () {
             if (typeof onSubmit != "function")
                 throw "PureForm::form::onSubmit() >> Failed, onSubmit param must be a function and is not.";
 
-            this._onSubmit = onSubmit;
+            this.__onSubmit = onSubmit;
 
             return this;
 
@@ -219,7 +222,7 @@ var pureForm = (function () {
             if (typeof onSubmitComplete != "function")
                 throw "PureForm::form::onSubmitComplete() >> Failed, onSubmitComplete param must be a function and is not.";
 
-            this._onSubmitComplete = onSubmitComplete;
+            this.__onSubmitComplete = onSubmitComplete;
 
             return this;
 
@@ -239,7 +242,7 @@ var pureForm = (function () {
             if (typeof onValid != "function")
                 throw "PureForm::form::onValid() >> Failed, onValid param must be a function and is not.";
 
-            this._onValid = onValid;
+            this.__onValid = onValid;
 
             return this;
 
@@ -259,11 +262,23 @@ var pureForm = (function () {
          */
         this.submit = function (form_object) {
 
-            if (typeof this._onSubmit == "function")
+            if (typeof this.__onSubmit == "function")
                 // call custom onSubmit function
-                this._onSubmit();
+                this.__onSubmit();
 
             // collect field values
+            this.__fieldValues = {}
+
+            for (field_id in this.__fields) {
+
+                var field = this.__fields[field_id];
+
+                // type cast value
+                this.__fieldValues[field_id] = this.__pureForm.getTypeCaster(field.type).getValue(field_id);
+
+            }
+
+            console.log(this.__fieldValues);
 
             // validate field values
 
@@ -273,9 +288,9 @@ var pureForm = (function () {
 
             // call custom onInvalid/onValid funtion
 
-            if (typeof this._onSubmitComplete == "function")
+            if (typeof this.__onSubmitComplete == "function")
                 // call custom onSubmitComplete function
-                this._onSubmitComplete();
+                this.__onSubmitComplete();
 
         };
 
@@ -295,7 +310,7 @@ var pureForm = (function () {
         if (name in _forms)
             throw "PureForm::create() >> Failed, form named `" + name + "` already exist.";
 
-        _forms[name] = new _formObject;
+        _forms[name] = new _formObject(this);
 
         return _forms[name];
 
@@ -321,13 +336,54 @@ var pureForm = (function () {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Return registered type caster object.
+     *
+     * @param name (string)
+     *
+     * @return (object)
+     */
+    function getTypeCaster (name) {
+
+        if (name in _types)
+            return _types[name];
+
+        // type not registered
+        throw new pureFormErrorTypeNotRegistered({message: "`" +  name + "` type not registered"});
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Register type.
+     *
+     * @param name       (string)
+     * @param typeCaster (object)
+     */
+    function registerType (name, typeCaster) {
+
+        if (name in _types)
+            // type already registered
+            throw new pureFormErrorTypeAlreadyRegistered({message: "`" +  name + "` already registered",
+                                                          data:    {"typeCaster": typeCaster}});
+
+        // register type
+        _types[name] = typeCaster;
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     // return PureForm methods
     return (function () {
 
         return {
             // validator
-            "create": create,
-            "get":    get
+            "create":        create,
+            "get":           get,
+            "getTypeCaster": getTypeCaster,
+            "registerType":  registerType
         };
 
     });
@@ -335,29 +391,50 @@ var pureForm = (function () {
 })();
 
 // ---------------------------------------------------------------------------------------------------------------------
+// ERRORS
+// ---------------------------------------------------------------------------------------------------------------------
 
 /**
- * PureForm base Error.
+ * This is the base error that all other PureForm errors are based.
  *
  * @param params (object)
+ *
+ * @return (function)
  */
-function pureFormError (params) {
+function pureFormError () {
 
-    this.code    = null;
-    this.data    = null;
-    this.message = null;
+    return function (params) {
+        this.code    = null;
+        this.data    = null;
+        this.message = null;
 
-    if (typeof params == "object") {
+        if (typeof params == "object") {
 
-        if (typeof params.code != "undefined")
-            this.code = params.code;
+            if (typeof params.code != "undefined")
+                this.code = params.code;
 
-        if (typeof params.data != "undefined")
-            this.data = params.data;
+            if (typeof params.data != "undefined")
+                this.data = params.data;
 
-        if (typeof params.message != "undefined")
-            this.message = params.message;
+            if (typeof params.message != "undefined")
+                this.message = params.message;
 
-    }
+        }
+
+    };
 
 }
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * This is thrown when registering a type name that has already been registered.
+ */
+var pureFormErrorTypeAlreadyRegistered = new pureFormError();
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * This is thrown when attempting to get an unregistered type.
+ */
+var pureFormErrorTypeNotRegistered = new pureFormError();

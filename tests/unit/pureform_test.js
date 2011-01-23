@@ -66,7 +66,7 @@ test("addField()", function () {
     pureForm().create("addField()_1");
 
     //tests
-    ok(pureForm().get("addField()_1").addField("field_1", {}), "Add field to form");
+    ok(pureForm().get("addField()_1").addField("field_1", {type: "string"}), "Add field to form");
 
 });
 
@@ -77,8 +77,8 @@ test("addFields()", function () {
     // setup
     pureForm().create("addFields()_1");
     var test_fields = {
-        "field_1": {},
-        "field_2": {}
+        "field_1": {type: "string"},
+        "field_2": {type: "string"}
     }
 
     //tests

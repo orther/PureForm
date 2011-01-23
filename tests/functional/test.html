@@ -85,12 +85,14 @@
 
         <!-- Functional Testing JS -->
         <script type="text/javascript">
-        var edit_user_form = pureForm().create("edit_user").addFields({
-            "first_name": {type: "string"},
+        var edit_user_form = pureForm().create("edit_user").registerValidator("coolName", function (field) {
+            return (field.value == "Brandon");
+        }).addFields({
+            "first_name": {type: "string", validators: ["coolName"]},
             "last_name":  {type: "string"},
             "is_macking": {type: "boolean"},
-            "cool_level": {type: "float"},
-            "cash_flow":  {type: "integerFloor"}
+            "cool_level": {type: "integer"},
+            "cash_flow":  {type: "float"}
         }).addAggregates({
             "full_name": { aggregateFunction: function (formValues) {
                 return {

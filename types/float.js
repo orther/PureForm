@@ -7,6 +7,6 @@ pureFormTypeFloat.typeCast = function (raw_value) {
 
     return parseFloat(raw_value);
 
-}
+};
 
 pureForm().registerType("float", pureFormTypeFloat);

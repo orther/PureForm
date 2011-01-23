@@ -7,6 +7,6 @@ pureFormTypeIntegerCeil.typeCast = function (raw_value) {
 
     return Math.ceil(parseFloat(raw_value));
 
-}
+};
 
 pureForm().registerType("integerCeil", pureFormTypeIntegerCeil);

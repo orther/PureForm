@@ -7,6 +7,6 @@ pureFormTypeIntegerFloor.typeCast = function (raw_value) {
 
     return Math.floor(parseFloat(raw_value));
 
-}
+};
 
 pureForm().registerType("integerFloor", pureFormTypeIntegerFloor);

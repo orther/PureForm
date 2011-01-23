@@ -7,6 +7,6 @@ pureFormTypeInteger.typeCast = function (raw_value) {
 
     return Math.round(parseFloat(raw_value));
 
-}
+};
 
 pureForm().registerType("integer", pureFormTypeInteger);

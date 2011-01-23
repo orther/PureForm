@@ -126,7 +126,7 @@ var pureForm = (function () {
             var button = document.getElementById(button_id);
 
             if (button == null)
-                throw "PureForm::form::attachSubmitButton() >> Failed, element with id `" + button_id + "` doesn't exist.";
+                throw "pureForm::form::attachSubmitButton() >> Failed, element with id `" + button_id + "` doesn't exist.";
 
             var _this = this;
 
@@ -148,7 +148,7 @@ var pureForm = (function () {
         this.attachSubmitButtons = function (button_ids) {
 
             if (typeof button_ids != "object" || !(button_ids instanceof Array))
-                throw "PureForm::form::attachSubmitButtons() >> Failed, `button_ids` is not an instance of Array";
+                throw "pureForm::form::attachSubmitButtons() >> Failed, `button_ids` is not an instance of Array";
 
             for (i in button_ids) {
 
@@ -158,7 +158,7 @@ var pureForm = (function () {
 
                 } catch (e) {
 
-                    throw "PureForm::form::attachSubmitButtons() >> Failed, element with id `" + button_ids[i] + "` doesn't exist.";
+                    throw "pureForm::form::attachSubmitButtons() >> Failed, element with id `" + button_ids[i] + "` doesn't exist.";
 
                 }
 
@@ -180,7 +180,7 @@ var pureForm = (function () {
         this.onInvalid = function (onInvalid) {
 
             if (typeof onInvalid != "function")
-                throw "PureForm::form::onInvalid() >> Failed, onInvalid param must be a function and is not.";
+                throw "pureForm::form::onInvalid() >> Failed, onInvalid param must be a function and is not.";
 
             this.__onInvalid = onInvalid;
 
@@ -200,7 +200,7 @@ var pureForm = (function () {
         this.onSubmit = function (onSubmit) {
 
             if (typeof onSubmit != "function")
-                throw "PureForm::form::onSubmit() >> Failed, onSubmit param must be a function and is not.";
+                throw "pureForm::form::onSubmit() >> Failed, onSubmit param must be a function and is not.";
 
             this.__onSubmit = onSubmit;
 
@@ -220,7 +220,7 @@ var pureForm = (function () {
         this.onSubmitComplete = function (onSubmitComplete) {
 
             if (typeof onSubmitComplete != "function")
-                throw "PureForm::form::onSubmitComplete() >> Failed, onSubmitComplete param must be a function and is not.";
+                throw "pureForm::form::onSubmitComplete() >> Failed, onSubmitComplete param must be a function and is not.";
 
             this.__onSubmitComplete = onSubmitComplete;
 
@@ -240,7 +240,7 @@ var pureForm = (function () {
         this.onValid = function (onValid) {
 
             if (typeof onValid != "function")
-                throw "PureForm::form::onValid() >> Failed, onValid param must be a function and is not.";
+                throw "pureForm::form::onValid() >> Failed, onValid param must be a function and is not.";
 
             this.__onValid = onValid;
 
@@ -308,7 +308,7 @@ var pureForm = (function () {
     function create (name) {
 
         if (name in _forms)
-            throw "PureForm::create() >> Failed, form named `" + name + "` already exist.";
+            throw "pureForm::create() >> Failed, form named `" + name + "` already exist.";
 
         _forms[name] = new _formObject(this);
 
@@ -328,7 +328,7 @@ var pureForm = (function () {
     function get (name) {
 
         if (!(name in _forms))
-            throw "PureForm::get() >> Failed, form named `" + name + "` does not exist.";
+            throw "pureForm::get() >> Failed, form named `" + name + "` does not exist.";
 
         return _forms[name];
 
@@ -349,7 +349,7 @@ var pureForm = (function () {
             return _types[name];
 
         // type not registered
-        throw new pureFormErrorTypeNotRegistered({message: "`" +  name + "` type not registered"});
+        throw "pureForm::getTypeCaster() >> `" +  name + "` not registered";
 
     }
 
@@ -365,8 +365,7 @@ var pureForm = (function () {
 
         if (name in _types)
             // type already registered
-            throw new pureFormErrorTypeAlreadyRegistered({message: "`" +  name + "` already registered",
-                                                          data:    {"typeCaster": typeCaster}});
+            throw "pureForm::registerType() >> `" +  name + "` already registered";
 
         // register type
         _types[name] = typeCaster;
@@ -389,52 +388,3 @@ var pureForm = (function () {
     });
 
 })();
-
-// ---------------------------------------------------------------------------------------------------------------------
-// ERRORS
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This is the base error that all other PureForm errors are based.
- *
- * @param params (object)
- *
- * @return (function)
- */
-function pureFormError () {
-
-    return function (params) {
-        this.code    = null;
-        this.data    = null;
-        this.message = null;
-
-        if (typeof params == "object") {
-
-            if (typeof params.code != "undefined")
-                this.code = params.code;
-
-            if (typeof params.data != "undefined")
-                this.data = params.data;
-
-            if (typeof params.message != "undefined")
-                this.message = params.message;
-
-        }
-
-    };
-
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This is thrown when registering a type name that has already been registered.
- */
-var pureFormErrorTypeAlreadyRegistered = new pureFormError();
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This is thrown when attempting to get an unregistered type.
- */
-var pureFormErrorTypeNotRegistered = new pureFormError();

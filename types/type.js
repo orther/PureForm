@@ -104,7 +104,7 @@ function pureFormType () {
         }
 
         // type can not be determined
-        throw new pureFormTypeErrorUndeterminedType();
+        throw "pureFormType::__getFieldType() >> Element's type can not be determined";
 
     }
 
@@ -142,23 +142,19 @@ function pureFormType () {
             case "INPUT_RESET":
             case "INPUT_SUBMIT":
             case "INPUT_TEXT":
-                var value = element.value;
+                if (typeof element.value != "string")
+                    throw "pureFormType::__getFieldValue() >> Type caster failed to collect value from field";
 
-                if (typeof value != "string")
-                    throw new pureFormTypeErrorValueCollectionFailed();
-
-                return value;
+                return element.value;
 
             // -----------------------------------------------------------------------------------------------------------------
 
             case "INPUT_CHECKBOX":
-                var value = element.value;
-
-                if (typeof value != "string")
-                    throw new pureFormTypeErrorValueCollectionFailed();
+                if (typeof element.value != "string")
+                    throw "pureFormType::__getFieldValue() >> Type caster failed to collect value from field";
 
                 if (element.checked)
-                    return value;
+                    return element.value;
 
                 return "";
 
@@ -174,9 +170,9 @@ function pureFormType () {
                         var value = fields[i].value;
 
                         if (typeof value != "string")
-                            throw new pureFormTypeErrorValueCollectionFailed();
+                            throw "pureFormType::__getFieldValue() >> Type caster failed to collect value from field";
 
-                        return vale;
+                        return value;
 
                     }
 
@@ -188,29 +184,22 @@ function pureFormType () {
             // -----------------------------------------------------------------------------------------------------------------
 
             case "SELECT":
-                var value = element.value;
+                if (typeof element.value != "string")
+                    throw "pureFormType::__getFieldValue() >> Type caster failed to collect value from field";
 
-                if (typeof value != "string")
-                    throw new pureFormTypeErrorValueCollectionFailed();
-
-                if (element.checked)
-                    return value;
-
-                return "";
+                return element.value;
 
             // -----------------------------------------------------------------------------------------------------------------
 
             case "TEXTAREA":
-                var value = element.value;
+                if (typeof element.value != "string")
+                    throw "pureFormType::__getFieldValue() >> Type caster failed to collect value from field";
 
-                if (typeof value != "string")
-                    throw new pureFormTypeErrorValueCollectionFailed();
-
-                return value;
+                return element.value;
 
         }
 
-        throw pureFormTypeErrorNoCollectorForType();
+        throw "pureFormType::__getFieldValue() >> Type caster doesn't have field value collection method for type `" + type + "`";
 
     }
 
@@ -229,7 +218,7 @@ function pureFormType () {
         var field = document.getElementById(field_id);
 
         if (field == null)
-            throw new pureFormTypeErrorElementDoesNotExist();
+            throw "pureFormType::__getRawValue() >> Field element with the id `" + field_id + "` does not exist";
 
         // get field type
         var type = this.__getFieldType(field);
@@ -253,7 +242,7 @@ function pureFormType () {
     this.getValue = function (field_id) {
 
         if (typeof this.typeCast != "function")
-            throw new pureFormTypeErrorMissingTypeCastMethod();
+            throw "pureFormType::getValue() >> Type class doesn't provide a typeCast method";
 
         return this.typeCast(this.__getRawValue(field_id));
 
@@ -262,73 +251,3 @@ function pureFormType () {
     // -----------------------------------------------------------------------------------------------------------------
 
 }
-
-// ---------------------------------------------------------------------------------------------------------------------
-// ERRORS
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This is the base error that all other pureFormType errors are based.
- *
- * @param params (object)
- *
- * @return (function)
- */
-function pureFormTypeError () {
-
-    return function (params) {
-        this.code    = null;
-        this.data    = null;
-        this.message = null;
-
-        if (typeof params == "object") {
-
-            if (typeof params.code != "undefined")
-                this.code = params.code;
-
-            if (typeof params.data != "undefined")
-                this.data = params.data;
-
-            if (typeof params.message != "undefined")
-                this.message = params.message;
-
-        }
-
-    };
-
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This error is thrown when a field element with the set ID does not exist.
- */
-var pureFormTypeErrorElementDoesNotExist = new pureFormError();
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This error is thrown when the type class doesn't provide a typeCast method.
- */
-var pureFormTypeErrorMissingTypeCastMethod = new pureFormError();
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This error is thrown when a collector for the element type doesn't exist.
- */
-var pureFormTypeErrorNoCollectorForType = new pureFormError();
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This error is thrown when an element's type can not be determined.
- */
-var pureFormTypeErrorUndeterminedType = new pureFormError();
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * This error is thrown when a collector fails to collect value from field.
- */
-var pureFormTypeErrorValueCollectionFailed = new pureFormError();

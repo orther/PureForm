@@ -10,6 +10,10 @@
         <script src="../../pureform.js" type="text/javascript"></script>
         <script src="../../types/type.js" type="text/javascript"></script>
         <script src="../../types/boolean.js" type="text/javascript"></script>
+        <script src="../../types/float.js" type="text/javascript"></script>
+        <script src="../../types/integer.js" type="text/javascript"></script>
+        <script src="../../types/integerCeil.js" type="text/javascript"></script>
+        <script src="../../types/integerFloor.js" type="text/javascript"></script>
         <script src="../../types/string.js" type="text/javascript"></script>
         <!-- Your tests file goes here -->
         <script type="text/javascript" src="../unit/pureform_test.js"></script>
@@ -46,7 +50,7 @@
             </li>
             <li>
                 <label for="cash_flow">Cash Flow</label>
-                <input id="cash_flow" value="1000000.00">
+                <input id="cash_flow" value="1000000.99">
             </li>
             <li>
                 <label for="is_macking">Straight Macking Outta Control</label>
@@ -84,14 +88,9 @@
         var edit_user_form = pureForm().create("edit_user").addFields({
             "first_name": {type: "string"},
             "last_name":  {type: "string"},
-            "is_macking": {type: "boolean"}
-/*
-            "cool_level": {type: "integer", min: 1, max: 5},
-            "cash_flow":  {type: "float", min: 0, max: 9999999.99, precision: 2},
-            "is_macking": {type: "boolean", typeFunction: function (rawValue) {
-                return (raw_value === "1");
-            }}
-*/
+            "is_macking": {type: "boolean"},
+            "cool_level": {type: "float"},
+            "cash_flow":  {type: "integerFloor"}
         }).addAggregates({
             "full_name": { aggregateFunction: function (formValues) {
                 return {

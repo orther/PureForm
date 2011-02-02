@@ -33,13 +33,28 @@ var pureForm = (function () {
          this.__createField = function (name, type) {
 
             // return PureForm methods
-            return (function () {
+            return function () {
 
-                var __form       = this;
-                var __name       = name;
-                var __type       = type;
-                var __validators = [];
-                var __value      = null;
+                var __failed_validators = [];
+                var __form              = this;
+                var __name              = name;
+                var __type              = type;
+                var __validators        = [];
+                var __valid             = false;
+                var __value             = null;
+
+                // -----------------------------------------------------------------------------------------------------
+
+                /**
+                 * Return field type.
+                 *
+                 * @return (Array)
+                 */
+                function getType () {
+
+                    return __type;
+
+                }
 
                 // -----------------------------------------------------------------------------------------------------
 
@@ -70,14 +85,46 @@ var pureForm = (function () {
                 // -----------------------------------------------------------------------------------------------------
 
                 /**
+                 * Return true if field has been validated otherwise false. Throws error if  the validate function has't
+                 * been run on this field.
+                 *
+                 * @return (boolean)
+                 */
+                function isValid () {
+
+                    if (__valid === null)
+                        throw "pureForm::form::field::isValid >> Validator hadn't been ran on this field.";
+
+                    return (__value === true);
+
+                }
+
+                // -----------------------------------------------------------------------------------------------------
+
+                /**
+                 * Set field type.
+                 *
+                 * @param name (string)
+                 */
+                function setType (name) {
+
+                    __type = type;
+
+                }
+
+                // -----------------------------------------------------------------------------------------------------
+
+                /**
                  * Set field value.
                  *
                  * @param value (*) The value can hold any type.
                  */
                 function setValue (value) {
 
+                    console.log(__failed_validators, __form, __name, __type, __validators, __valid, __value);
                     __value = value;
 
+                    //console.log("setValue>> " + __value + " to " + value);
                 }
 
                 // -----------------------------------------------------------------------------------------------------
@@ -92,21 +139,53 @@ var pureForm = (function () {
                     if (name in __validators)
                         throw "pureForm::form::field::setValidator >> Validator `" + name + "` already set";
 
-                    __validators,push(name);
+                    __validators.push(name);
+
+                }
+
+                // -----------------------------------------------------------------------------------------------------
+
+                /**
+                 * Loop through validators and validate field value.
+                 *
+                 * @return (boolean) Returns false if any validator fails otherwise, return true.
+                 */
+                function validate () {
+
+                    __valid = true;
+
+                    for (i in __validators) {
+
+                        if (!__form.__pureForm.getValidator(__validators[i])(getValue())) {
+
+                            __valid == false;
+
+                            // add validator name to failed validators array
+                            __failed_validators.push(__validators[i]);
+
+
+                        }
+
+                    }
+
+                    return __valid;
 
                 }
 
                 // -----------------------------------------------------------------------------------------------------
 
                 return {
-                    // validator
-                    "create":        create,
-                    "get":           get,
-                    "getTypeCaster": getTypeCaster,
-                    "registerType":  registerType
+                    "getType":       getType,
+                    "getValidators": getValidators,
+                    "getValue":      getValue,
+                    "isValid":       isValid,
+                    "setType":       setType,
+                    "setValidator":  setValidator,
+                    "setValue":      setValue,
+                    "validate":      validate
                 };
 
-            });
+            };
 
         };
 
@@ -177,8 +256,43 @@ var pureForm = (function () {
             if (typeof params != "object")
                 throw "pureForm::addField >> `params` not an object";
 
+            if (typeof params.type == "undefiend")
+                throw "pureForm::addField >> Field `type` not set";
+
+            if (!(params.type in __types)) {
+                throw "pureForm::addField >> `" + name + "` field type `" + params.type  + "` is not registered";
+            }
+
+            // create field
+            var field = this.__createField(name, params.type);
+
+            if (typeof params.validators != "undefined") {
+
+                if (!(params.validators instanceof Array))
+                    throw "pureForm::addField >> Field `validators` is of type `" + typeof params.validators + "` but must be an array";
+
+                for (i in params.validators) {
+
+                    // set validator
+                    try {
+
+                        this.__pureForm.setValidator(params.validators[i]);
+
+                    } catch (e) {
+
+                        throw "pureForm::addField >> Field validator `" + params.validators[i] + "` is not registered";
+
+                    }
+
+                    // add validator to field
+                    field().setValidator();
+
+                }
+
+            }
+
             // add field
-            this.__fields[name] = params;
+            this.__fields[name] = field;
 
             return this;
 
@@ -378,16 +492,22 @@ var pureForm = (function () {
             // collect field values
             this.__fieldValues = {}
 
+            var form_valid = true;
+
             for (field_id in this.__fields) {
 
-                var field = this.__fields[field_id];
+                // set type casted value
+                var type_casted_value = this.__pureForm.getTypeCaster(this.__fields[field_id]().getType()).getValue(field_id);
 
-                // type cast value
-                this.__fieldValues[field_id] = this.__pureForm.getTypeCaster(field.type).getValue(field_id);
+                this.__fields[field_id]().setValue(type_casted_value);
+
+                // validate fields
+                var field_valid = this.__fields[field_id]().validate();
+
+                if (!field_valid)
+                    form_valid = false;
 
             }
-
-            console.log(this.__fieldValues);
 
             // validate field values
 
@@ -396,6 +516,20 @@ var pureForm = (function () {
             // validate aggregate values
 
             // call custom onInvalid/onValid funtion
+            if (form_valid) {
+
+                if (typeof this.__onValid == "function")
+                    // call custom onValid function
+                    this.__onValid(this.__fields);
+
+            } else {
+
+                if (typeof this.__onInvalid == "function")
+                    // call custom onInvalid function
+                    this.__onInvalid(this.__fields);
+
+            }
+
 
             if (typeof this.__onSubmitComplete == "function")
                 // call custom onSubmitComplete function
@@ -465,6 +599,25 @@ var pureForm = (function () {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
+     * Return validator.
+     *
+     * @param name (string)
+     *
+     * @return (function)
+     */
+    function getValidator (name) {
+
+        if (name in __validators)
+            return __validators[name];
+
+        // type not registered
+        throw "pureForm::getValidator() >> `" +  name + "` not registered";
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
      * Register type.
      *
      * @param name       (string)
@@ -510,6 +663,7 @@ var pureForm = (function () {
             "create":            create,
             "get":               get,
             "getTypeCaster":     getTypeCaster,
+            "getValidator":      getValidator,
             "registerType":      registerType,
             "registerValidator": registerValidator
         };

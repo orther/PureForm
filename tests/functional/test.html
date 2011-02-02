@@ -4,9 +4,9 @@
     <head>
         <title>PureForm Functional Test</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!--
         <link rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" type="text/css" media="screen">
         <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
-        <!-- <link rel="stylesheet" href="/css/think-done.css" type="text/css"> -->
         <script src="../../pureform.js" type="text/javascript"></script>
         <script src="../../types/type.js" type="text/javascript"></script>
         <script src="../../types/boolean.js" type="text/javascript"></script>
@@ -15,8 +15,14 @@
         <script src="../../types/integerCeil.js" type="text/javascript"></script>
         <script src="../../types/integerFloor.js" type="text/javascript"></script>
         <script src="../../types/string.js" type="text/javascript"></script>
-        <!-- Your tests file goes here -->
-        <script type="text/javascript" src="../unit/pureform_test.js"></script>
+        script type="text/javascript" src="../unit/pureform_test.js"></script>
+        -->
+        <script src="../../pureform_2.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            pureForm().registerRetriever("coolName", function () {}, function () {});
+            pureForm().registerRetriever("dopeName", function () {}, function () {});
+            console.log(pureForm().getRetrievers());
+        </script>
     </head>
     <body>
 
@@ -70,28 +76,31 @@
 
         <button id="submit_2">Submit</button>
 
+        <!--
         <h2>Submission Details</h2>
 
         <ul id="submission-details">
 
         </ul>
 
-        <!-- Unit Testing -->
+        <!-- Unit Testing --
         <h1 id="qunit-header">QUnit Test Suite</h1>
         <h2 id="qunit-banner"></h2>
         <div id="qunit-testrunner-toolbar"></div>
         <h2 id="qunit-userAgent"></h2>
         <ol id="qunit-tests"></ol>
 
-        <!-- Functional Testing JS -->
+        <!-- Functional Testing JS --
         <script type="text/javascript">
         var edit_user_form = pureForm().create("edit_user").registerValidator("coolName", function (field) {
-            return (field.value == "Brandon");
+            return (field.getValue() == "Brandon");
         }).addFields({
+            /*
             "first_name": {type: "string", validators: ["coolName"]},
             "last_name":  {type: "string"},
             "is_macking": {type: "boolean"},
             "cool_level": {type: "integer"},
+            */
             "cash_flow":  {type: "float"}
         }).addAggregates({
             "full_name": { aggregateFunction: function (formValues) {
@@ -107,11 +116,20 @@
 
             details.innerHTML = "<li>onSubmit Called</li>";
 
-        }).onValid(function () {
+        }).onValid(function (fields) {
             // triggered after validation if all fields are valid
             var details = document.getElementById("submission-details");
 
-            details.innerHTML += "<li>onValid Called</li>";
+            var field_details = "<ul>";
+            for (field_name in fields) {
+
+                // console.log(fields[field_name]());
+                field_details += "<li>" + field_name + ": isValid(" + fields[field_name]().isValid() + ")</li>";
+
+            }
+            field_details += "</ul>";
+
+            details.innerHTML += "<li>onValid Called: " + field_details + "</li>";
 
         }).onInvalid(function () {
             // triggered after validation if invalid field(s)
@@ -126,6 +144,30 @@
             details.innerHTML += "<li>onSubmitComplete Called</li>";
 
         }).attachSubmitButtons(["submit_1","submit_2"]);
+
+        function ct () {
+
+            return (function () {
+
+                var __test = null;
+
+                function get (value) {
+
+                    return __test;
+
+                }
+
+                function set (value) {
+
+                    __test = value;
+
+                }
+
+                return {"get": get, "set": set}
+
+            })();
+
+        }
         </script>
 
     </body>

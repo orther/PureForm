@@ -1,25 +1,25 @@
 var pureForm = (function () {
 
-    var __retrievers      = {};
-    var __retriever_order = [];
+    var __base_retrievers        = {};
+    var __custom_retrievers      = {};
+    var __custom_retriever_order = [];
 
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Register a retriever.
+     * Register a custom retriever.
      *
      * @param name                    (string)
      * @param is_retiever_function    (function)
      * @param retrieve_value_function (function)
-     * @param prepend_to_order_list   (boolean)  [optional]
      */
-    function registerRetriever (name, is_retriever_function, retrieve_value_function, prepend_to_order_list) {
+    function registerRetriever (name, is_retriever_function, retrieve_value_function)  {
 
         // thow exception if arguments are not valid
         if (typeof name != "string")
             throw "pureForm::registerRetriever >> `name` param is of type `" + typeof name + "` but must be a string";
 
-        if (name in __retrievers)
+        if (name in __custom_retrievers)
             throw "pureForm::registerRetriever >> `" + name + "` retriever already registered";
 
         if (typeof is_retriever_function != "function")
@@ -28,10 +28,7 @@ var pureForm = (function () {
         if (typeof retrieve_value_function != "function")
             throw "pureForm::registerRetriever >> `retrieve_value_function` param is of type `" + typeof retrieve_value_function + "` but must be a function";
 
-        if (typeof prepend_to_order_list != "boolean")
-            var prepend_to_order_list = false;
-
-        __retrievers[name] = {
+        __custom_retrievers[name] = {
 
             /**
              * Test if this retriever is for the supplied element.
@@ -61,17 +58,63 @@ var pureForm = (function () {
 
         };
 
-        if (prepend_to_order_list) {
+        __custom_retriever_order.push(name);
 
-            // add retriever to begining of order list
-            __retriever_order.unshift(name);
+    }
 
-        } else {
+    // -----------------------------------------------------------------------------------------------------------------
 
-           // add retriever to end of order list
-            __retriever_order.push(name);
+    /**
+     * Register a base retriever.
+     *
+     * @param name                    (string)
+     * @param is_retiever_function    (function)
+     * @param retrieve_value_function (function)
+     */
+    function __registerBaseRetriever (name, is_retriever_function, retrieve_value_function)  {
 
-        }
+        // thow exception if arguments are not valid
+        if (typeof name != "string")
+            throw "pureForm::__registerBaseRetriever >> `name` param is of type `" + typeof name + "` but must be a string";
+
+        if (name in __base_retrievers)
+            throw "pureForm::__registerBaseRetriever >> `" + name + "` retriever already registered";
+
+        if (typeof is_retriever_function != "function")
+            throw "pureForm::__registerBaseRetriever >> `is_retriever_function` param is of type `" + typeof is_retriever_function + "` but must be a function";
+
+        if (typeof retrieve_value_function != "function")
+            throw "pureForm::__registerBaseRetriever >> `retrieve_value_function` param is of type `" + typeof retrieve_value_function + "` but must be a function";
+
+        __base_retrievers[name] = {
+
+            /**
+             * Test if this retriever is for the supplied element.
+             *
+             * @param element (object)
+             *
+             * @return (bool)
+             */
+             "isRetriever": function (element) {
+
+                return is_retriever_function(element);
+
+             },
+
+            /**
+             * Retrieve field value.
+             *
+             * @param element (object)
+             *
+             * @return (*)
+             */
+             "retrieveValue": function (element) {
+
+                return retrieve_value_function(element);
+
+             }
+
+        };
 
     }
 
@@ -89,13 +132,25 @@ var pureForm = (function () {
         if (typeof element != "object")
             throw "pureForm::retrieveValue >> `element` param is of type `" + typeof element + "` but must be an object";
 
-        console.log(__retriever_order);
-        for (i in __retriever_order) {
+        // loop through custom retrievers
+        for (i in __custom_retriever_order) {
 
-            if (__retrievers[__retriever_order[i]].isRetriever(element)) {
+            if (__custom_retrievers[__custom_retriever_order[i]].isRetriever(element)) {
 
                 // use this retriever to return value
-                return __retrievers[__retriever_order[i]].retrieveValue(element);
+                return __custom_retrievers[__custom_retriever_order[i]].retrieveValue(element);
+
+            }
+
+        }
+
+        // loop through base retrievers
+        for (name in __base_retrievers) {
+
+            if (__base_retrievers[name].isRetriever(element)) {
+
+                // use this retriever to return value
+                return __base_retrievers[name].retrieveValue(element);
 
             }
 
@@ -110,8 +165,9 @@ var pureForm = (function () {
     return function () {
 
         return {
-            "registerRetriever": registerRetriever,
-            "retrieveValue":     retrieveValue
+            "__registerBaseRetriever": __registerBaseRetriever,
+            "registerRetriever":       registerRetriever,
+            "retrieveValue":           retrieveValue
         };
 
     };

@@ -1,10 +1,15 @@
-pureForm().registerRetriever("form_input",
+pureForm().__registerBaseRetriever("form_input",
     // test if this is retriever for element
     function (element) {
 
         switch (element.tagName) {
+
             case "BUTTON":
+            case "SELECT":
+            case "TEXTAREA":
                 return true;
+
+            // ---------------------------------------------------------------------------------------------------------
 
             case "INPUT":
                 switch (element.type) {
@@ -21,12 +26,6 @@ pureForm().registerRetriever("form_input",
                         return true;
                 }
 
-            case "SELECT":
-                return true;
-
-            case "TEXTAREA":
-                return true;
-
         }
 
         return false;
@@ -38,6 +37,8 @@ pureForm().registerRetriever("form_input",
         switch (element.tagName) {
             case "BUTTON":
                 return element.value;
+
+            // ---------------------------------------------------------------------------------------------------------
 
             case "INPUT":
                 switch (element.type) {
@@ -51,6 +52,8 @@ pureForm().registerRetriever("form_input",
                     case "text":
                         return element.value;
 
+                    // -------------------------------------------------------------------------------------------------
+
                     case "checkbox":
                         if (element.checked)
                             // checked
@@ -59,6 +62,8 @@ pureForm().registerRetriever("form_input",
                         // not checked
                         return "";
 
+
+                    // -------------------------------------------------------------------------------------------------
 
                     case "radio":
                         var fields = document.getElementsByName(element.name);
@@ -75,8 +80,12 @@ pureForm().registerRetriever("form_input",
 
                 }
 
+            // ---------------------------------------------------------------------------------------------------------
+
             case "SELECT":
                 return element.value;
+
+            // ---------------------------------------------------------------------------------------------------------
 
             case "TEXTAREA":
                 return element.value;

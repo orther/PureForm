@@ -1,12 +1,8 @@
-var pureFormTypeString = new pureFormType;
+pureForm()._registerBaseType("string", function (input_value) {
 
-pureFormTypeString.typeCast = function (raw_value) {
-
-     if (raw_value === "")
+     if (input_value === "")
         return null;
 
-    return String(raw_value);
+    return String(input_value);
 
-};
-
-pureForm().registerType("string", pureFormTypeString);
+});

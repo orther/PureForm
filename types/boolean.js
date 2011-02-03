@@ -1,9 +1,5 @@
-var pureFormTypeBoolean = new pureFormType;
+pureForm()._registerBaseType("boolean", function (input_value) {
 
-pureFormTypeBoolean.typeCast = function (raw_value) {
+    return (input_value == true);
 
-    return (raw_value == true);
-
-};
-
-pureForm().registerType("boolean", pureFormTypeBoolean);
+});

@@ -1,12 +1,8 @@
-var pureFormTypeInteger = new pureFormType;
+pureForm()._registerBaseType("integer", function (input_value) {
 
-pureFormTypeInteger.typeCast = function (raw_value) {
-
-     if (isNaN(raw_value))
+    if (isNaN(input_value))
         return false;
 
-    return Math.round(parseFloat(raw_value));
+    return Math.round(parseFloat(input_value));
 
-};
-
-pureForm().registerType("integer", pureFormTypeInteger);
+});

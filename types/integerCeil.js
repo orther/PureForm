@@ -1,12 +1,8 @@
-var pureFormTypeIntegerCeil = new pureFormType;
+pureForm()._registerBaseType("integerCeil", function (input_value) {
 
-pureFormTypeIntegerCeil.typeCast = function (raw_value) {
-
-     if (isNaN(raw_value))
+    if (isNaN(input_value))
         return false;
 
-    return Math.ceil(parseFloat(raw_value));
+    return Math.round(parseFloat(input_value));
 
-};
-
-pureForm().registerType("integerCeil", pureFormTypeIntegerCeil);
+});

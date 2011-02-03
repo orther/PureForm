@@ -1,12 +1,8 @@
-var pureFormTypeFloat = new pureFormType;
+pureForm()._registerBaseType("float", function (input_value) {
 
-pureFormTypeFloat.typeCast = function (raw_value) {
-
-     if (isNaN(raw_value))
+    if (isNaN(input_value))
         return false;
 
-    return parseFloat(raw_value);
+    return parseFloat(input_value);
 
-};
-
-pureForm().registerType("float", pureFormTypeFloat);
+});

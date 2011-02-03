@@ -1,9 +1,10 @@
 var pureForm = (function () {
 
     var __base_retrievers        = {};
-    var __base_type_casters      = {};
+    var __base_types             = {};
     var __custom_retrievers      = {};
     var __custom_retriever_order = [];
+    var __custom_types           = {};
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -66,6 +67,32 @@ var pureForm = (function () {
             throw "pureForm::_registerBaseRetriever >> `retrieve_value_function` param is of type `" + typeof retrieve_value_function + "` but must be a function";
 
         __base_retrievers[name] = __buildRetriever(is_retriever_function, retrieve_value_function);
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Register a base type.
+     *
+     * @param name                     (string)
+     * @param type_conversion_function (function)
+     *
+     * @return (*) Returns type casted value.
+     */
+    function _registerBaseType (name, type_conversion_function) {
+
+        // thow exception if arguments are not valid
+        if (typeof name != "string")
+            throw "pureForm::_registerBaseType >> `name` param is of type `" + typeof name + "` but must be a string";
+
+        if (name in __base_retrievers)
+            throw "pureForm::_registerBaseType >> `" + name + "` retriever already registered";
+
+        if (typeof type_conversion_function != "function")
+            throw "pureForm::_registerBaseType >> `type_conversion_function` param is of type `" + typeof is_retriever_function + "` but must be a function";
+
+        __base_types[name] = type_conversion_function;
 
     }
 
@@ -145,12 +172,39 @@ var pureForm = (function () {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Type cast a value.
+     *
+     * @param type_name   (object)
+     * @param input_value (*)
+     *
+     * @return (*)
+     */
+    function typeCast (type_name, input_value) {
+
+        if (!(type_name in __base_types) && !(type_name in __custom_types))
+            throw "pureForm::typeCast >> `" + type_name + "` type is not registered";
+
+        if (typeof input_value == "undefined")
+            throw "pureForm::typeCast >> `input_value` param is required";
+
+        if (type_name in __custom_types)
+            return __custom_types[type_name](input_value);
+
+        return __base_types[type_name](input_value);
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     return function () {
 
         return {
             "_registerBaseRetriever": _registerBaseRetriever,
-            "registerRetriever":       registerRetriever,
-            "retrieveValue":           retrieveValue
+            "_registerBaseType":      _registerBaseType,
+            "registerRetriever":      registerRetriever,
+            "retrieveValue":          retrieveValue,
+            "typeCast":               typeCast
         };
 
     };

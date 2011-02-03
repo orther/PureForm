@@ -1,12 +1,8 @@
-var pureFormTypeIntegerFloor = new pureFormType;
+pureForm()._registerBaseType("integerFloor", function (input_value) {
 
-pureFormTypeIntegerFloor.typeCast = function (raw_value) {
-
-     if (isNaN(raw_value))
+    if (isNaN(input_value))
         return false;
 
-    return Math.floor(parseFloat(raw_value));
+    return Math.floor(parseFloat(input_value));
 
-};
-
-pureForm().registerType("integerFloor", pureFormTypeIntegerFloor);
+});

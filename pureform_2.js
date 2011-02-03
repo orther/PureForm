@@ -1,8 +1,73 @@
 var pureForm = (function () {
 
     var __base_retrievers        = {};
+    var __base_type_casters      = {};
     var __custom_retrievers      = {};
     var __custom_retriever_order = [];
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    function __buildRetriever (is_retriever_function, retrieve_value_function) {
+
+       return {
+
+            /**
+             * Test if this retriever is for the supplied element.
+             *
+             * @param element (object)
+             *
+             * @return (bool)
+             */
+            "isRetriever": function (element) {
+
+                return is_retriever_function(element);
+
+            },
+
+            /**
+             * Retrieve field value.
+             *
+             * @param element (object)
+             *
+             * @return (*)
+             */
+            "retrieveValue": function (element) {
+
+                return retrieve_value_function(element);
+
+            }
+
+        };
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Register a base retriever.
+     *
+     * @param name                    (string)
+     * @param is_retiever_function    (function)
+     * @param retrieve_value_function (function)
+     */
+    function _registerBaseRetriever (name, is_retriever_function, retrieve_value_function)  {
+
+        // thow exception if arguments are not valid
+        if (typeof name != "string")
+            throw "pureForm::_registerBaseRetriever >> `name` param is of type `" + typeof name + "` but must be a string";
+
+        if (name in __base_retrievers)
+            throw "pureForm::_registerBaseRetriever >> `" + name + "` retriever already registered";
+
+        if (typeof is_retriever_function != "function")
+            throw "pureForm::_registerBaseRetriever >> `is_retriever_function` param is of type `" + typeof is_retriever_function + "` but must be a function";
+
+        if (typeof retrieve_value_function != "function")
+            throw "pureForm::_registerBaseRetriever >> `retrieve_value_function` param is of type `" + typeof retrieve_value_function + "` but must be a function";
+
+        __base_retrievers[name] = __buildRetriever(is_retriever_function, retrieve_value_function);
+
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -28,93 +93,11 @@ var pureForm = (function () {
         if (typeof retrieve_value_function != "function")
             throw "pureForm::registerRetriever >> `retrieve_value_function` param is of type `" + typeof retrieve_value_function + "` but must be a function";
 
-        __custom_retrievers[name] = {
+        // add custom retriever
+        __custom_retrievers[name] = __buildRetriever(is_retriever_function, retrieve_value_function);
 
-            /**
-             * Test if this retriever is for the supplied element.
-             *
-             * @param element (object)
-             *
-             * @return (bool)
-             */
-             "isRetriever": function (element) {
-
-                return is_retriever_function(element);
-
-             },
-
-            /**
-             * Retrieve field value.
-             *
-             * @param element (object)
-             *
-             * @return (*)
-             */
-             "retrieveValue": function (element) {
-
-                return retrieve_value_function(element);
-
-             }
-
-        };
-
+        // add custom retriever to the end of the order list
         __custom_retriever_order.push(name);
-
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Register a base retriever.
-     *
-     * @param name                    (string)
-     * @param is_retiever_function    (function)
-     * @param retrieve_value_function (function)
-     */
-    function __registerBaseRetriever (name, is_retriever_function, retrieve_value_function)  {
-
-        // thow exception if arguments are not valid
-        if (typeof name != "string")
-            throw "pureForm::__registerBaseRetriever >> `name` param is of type `" + typeof name + "` but must be a string";
-
-        if (name in __base_retrievers)
-            throw "pureForm::__registerBaseRetriever >> `" + name + "` retriever already registered";
-
-        if (typeof is_retriever_function != "function")
-            throw "pureForm::__registerBaseRetriever >> `is_retriever_function` param is of type `" + typeof is_retriever_function + "` but must be a function";
-
-        if (typeof retrieve_value_function != "function")
-            throw "pureForm::__registerBaseRetriever >> `retrieve_value_function` param is of type `" + typeof retrieve_value_function + "` but must be a function";
-
-        __base_retrievers[name] = {
-
-            /**
-             * Test if this retriever is for the supplied element.
-             *
-             * @param element (object)
-             *
-             * @return (bool)
-             */
-             "isRetriever": function (element) {
-
-                return is_retriever_function(element);
-
-             },
-
-            /**
-             * Retrieve field value.
-             *
-             * @param element (object)
-             *
-             * @return (*)
-             */
-             "retrieveValue": function (element) {
-
-                return retrieve_value_function(element);
-
-             }
-
-        };
 
     }
 
@@ -165,7 +148,7 @@ var pureForm = (function () {
     return function () {
 
         return {
-            "__registerBaseRetriever": __registerBaseRetriever,
+            "_registerBaseRetriever": _registerBaseRetriever,
             "registerRetriever":       registerRetriever,
             "retrieveValue":           retrieveValue
         };

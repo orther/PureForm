@@ -1,4 +1,4 @@
-pureForm().__registerBaseRetriever("form_input",
+pureForm()._registerBaseRetriever("form_input",
     // test if this is retriever for element
     function (element) {
 

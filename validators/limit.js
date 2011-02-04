@@ -30,17 +30,17 @@ pureForm().registerValidator("limit",
 
         if (typeof params.max_error == "undefined")
             // default max error message
-            params.max_error = "";
+            params.max_error = "To large!";
 
-        if (typeof params.min_error != "string")
-            throw "pureForm/Validator::limit >> `validator_params.min_error` param is of type `" + typeof params.min_error + "` but must be a string";
+        if (typeof params.max_error != "string")
+            throw "pureForm/Validator::limit >> `validator_params.max_error` param is of type `" + typeof params.max_error + "` but must be a string";
 
         if (typeof params.min != "undefined" && typeof params.min != "number")
             throw "pureForm/Validator::limit >> `validator_params.min` param is of type `" + typeof params.min + "` but must be a number";
 
         if (typeof params.min_error == "undefined")
             // default min error message
-            params.min_error = "";
+            params.min_error = "To small!";
 
         if (typeof params.min_error != "string")
             throw "pureForm/Validator::limit >> `validator_params.min_error` param is of type `" + typeof params.min_error + "` but must be a string";
@@ -69,6 +69,8 @@ pureForm().registerValidator("limit",
                 break;
 
         }
+
+        return (error_msgs.length) ? error_msgs : true;
 
     }
 );

@@ -140,13 +140,13 @@ var pureForm = (function () {
         if (typeof name != "string")
             throw "pureForm::_registerBaseValidator >> `name` param is of type `" + typeof name + "` but must be a string";
 
-        if (name in __base_validators)
+        if (name in __validators)
             throw "pureForm::_registerBaseValidator >> `" + name + "` validator already registered";
 
-        if (typeof type_conversion_function != "function")
+        if (typeof validator_function != "function")
             throw "pureForm::_registerBaseValidator >> `validator_function` param is of type `" + typeof validator_function + "` but must be a function";
 
-        __base_validators[name] = validator_function;
+        __validators[name] = validator_function;
 
     }
 
@@ -236,9 +236,6 @@ var pureForm = (function () {
         if (typeof validator_name == "undefined")
             throw "pureForm::validate >> `validator_name` param is required";
 
-        if (typeof value != "string")
-            throw "pureForm::validate >> `value` param is of type `" + typeof value + "` but must be a string";
-
         if (typeof validator_name != "string")
             throw "pureForm::validate >> `validator_name` param is of type `" + typeof value + "` but must be a string";
 
@@ -258,8 +255,10 @@ var pureForm = (function () {
             "_registerBaseRetriever": _registerBaseRetriever,
             "registerType":           registerType,
             "registerRetriever":      registerRetriever,
+            "registerValidator":      registerValidator,
             "retrieveValue":          retrieveValue,
-            "typeCast":               typeCast
+            "typeCast":               typeCast,
+            "validate":               validate
         };
 
     };

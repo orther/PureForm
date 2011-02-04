@@ -84,20 +84,20 @@
 
         </ul>
 
-        <!-- Unit Testing --
+        <!-- Unit Testing
         <h1 id="qunit-header">QUnit Test Suite</h1>
         <h2 id="qunit-banner"></h2>
         <div id="qunit-testrunner-toolbar"></div>
         <h2 id="qunit-userAgent"></h2>
         <ol id="qunit-tests"></ol>
-
+        --
         <!-- Functional Testing JS --
         <script type="text/javascript">
-        var edit_user_form = pureForm().create("edit_user").registerValidator("coolName", function (field) {
+        var edit_user_form = pureForm().create("edit_user").registerValidator("coolName", function (value, raw_value, type) {
             return (field.getValue() == "Brandon");
         }).addFields({
             /*
-            "first_name": {type: "string", validators: ["coolName"]},
+            "first_name": {type: "string", validators: ["coolName", ["limit", ], ]},
             "last_name":  {type: "string"},
             "is_macking": {type: "boolean"},
             "cool_level": {type: "integer"},

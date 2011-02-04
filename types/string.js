@@ -1,4 +1,4 @@
-pureForm()._registerBaseType("string", function (input_value) {
+pureForm().registerType("string", function (input_value) {
 
      if (input_value === "")
         return null;

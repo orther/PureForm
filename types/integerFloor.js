@@ -1,4 +1,4 @@
-pureForm()._registerBaseType("integerFloor", function (input_value) {
+pureForm().registerType("integerFloor", function (input_value) {
 
     if (isNaN(input_value))
         return false;

@@ -1,4 +1,4 @@
-pureForm()._registerBaseType("integer", function (input_value) {
+pureForm().registerType("integer", function (input_value) {
 
     if (isNaN(input_value))
         return false;

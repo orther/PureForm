@@ -1,8 +1,8 @@
-pureForm()._registerBaseType("integerCeil", function (input_value) {
+pureForm().registerType("integerCeil", function (input_value) {
 
     if (isNaN(input_value))
         return false;
 
-    return Math.round(parseFloat(input_value));
+    return Math.ceil(parseFloat(input_value));
 
 });

@@ -226,7 +226,7 @@ var pureForm = (function () {
      * @param validator_name   (string)
      * @param validator_params (object) [optional]
      *
-     * @return (null/string) Return null on success, otherwise return error message.
+     * @return (boolean/array) Retur true on success, otherwise return error message(s) in array.
      */
     function validate (value, validator_name, validator_params) {
 
@@ -234,7 +234,7 @@ var pureForm = (function () {
             throw "pureForm::validate >> `value` param is required";
 
         if (typeof validator_name == "undefined")
-            throw "pureForm::validate >> `value` param is required";
+            throw "pureForm::validate >> `validator_name` param is required";
 
         if (typeof value != "string")
             throw "pureForm::validate >> `value` param is of type `" + typeof value + "` but must be a string";
@@ -245,20 +245,8 @@ var pureForm = (function () {
         if (!(validator_name in __validators))
             throw "pureForm::validate >> `" + validator_name + "` validator is not registered";
 
-        try {
-
-            // run validator
-            __validators[validator_name](value, validator_params);
-
-        } catch (e) {
-
-            // validation failed
-            return e;
-
-        }
-
-        // successfully validated
-        return null;
+        // run validator
+        return val_resp = __validators[validator_name](value, validator_params);
 
     }
 

@@ -12,7 +12,7 @@ pureForm().registerValidator("limit",
      *                        max_error: This param allows you to set the error message returned on failed
      *                                   maximum validation.
      *
-     * @return (boolean/array) On valid return true, othewise return error message(s) in an array.
+     * @return (array) Return error message(s) in array. If array length 0 then the value is valid.
      */
     function (value, params) {
 
@@ -70,7 +70,7 @@ pureForm().registerValidator("limit",
 
         }
 
-        return (error_msgs.length) ? error_msgs : true;
+        return error_msgs;
 
     }
 );

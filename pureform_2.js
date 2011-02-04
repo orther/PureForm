@@ -226,7 +226,7 @@ var pureForm = (function () {
      * @param validator_name   (string)
      * @param validator_params (object) [optional]
      *
-     * @return (boolean/array) Retur true on success, otherwise return error message(s) in array.
+     * @return (array) Return error message(s) in array. If array length 0 then the value is valid.
      */
     function validate (value, validator_name, validator_params) {
 

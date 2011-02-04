@@ -1,0 +1,31 @@
+body {
+    margin:        20px auto;
+    padding:       0 20px;
+    width:         1200px;
+}
+
+h1 {
+}
+
+h2 {
+}
+
+#details_form {
+    float: left;
+    clear: left;
+    overflow:      hidden;
+    border:        1px solid #464646;
+    width: 350px;
+    padding: 0 20px;
+    margin-right: 10px;
+}
+
+#pureform_details {
+    float: left;
+    clear: right;
+    overflow:      hidden;
+    border:        1px solid #464646;
+    width: 750px;
+    padding: 0 20px;
+}
+

@@ -12,15 +12,13 @@ var pureForm = (function () {
     /**
      * Build a field object used internally to organize the elements of a field.
      *
+     * @param id     (string)
+     * @param params (object)
+     *
      * @return (object)
      */
-    function __buildField () {
+    function __buildField (params) {
 
-       return {
-            "raw_value":  null,
-            "validators": {},
-            "value":      null
-        };
 
     }
 
@@ -33,8 +31,59 @@ var pureForm = (function () {
      */
     function __buildForm () {
 
+        var __fields = {}
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Register a new field.
+         *
+         * @param id     (string)
+         * @param params (object)
+         *
+         * @return (object)
+         */
+        function addField (id, params) {
+
+            if (typeof id == "undefined")
+                throw "pureForm/form::addField >> `id` param is required";
+
+            if (typeof id != "string")
+                throw "pureForm/form::addField >> `id` param is of type `" + typeof id + "` but must be a string";
+
+            if (id in __fields)
+                throw "pureForm/form::addField >> `" + id + "` field already registered";
+
+            if (document.getElementById(id) === null)
+                throw "pureForm/form::addField >> There is no DOM element with ID `" + id + "`";
+
+            if (typeof params == "undefined")
+                throw "pureForm/form::addField::" + id + " >> `params` param is required";
+
+            if (typeof params != "object")
+                throw "pureForm/form::addField::" + id + " >> `params` param is of type `" + typeof params + "` but must be an object";
+
+            if (typeof params.type != "string")
+                throw "pureForm/form::addField::" + id + " >> `params.type` param is required and must be a string";
+
+            if (!(params.type in __types))
+                throw "pureForm/form::addField::" + id + " >> Field type `" + params.type + "` is not registered";
+
+           __fields[id] = {
+                "raw_value":  null,
+                "type":       params.type,
+                "validators": {},
+                "value":      null
+            };
+
+            return this;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
        return {
-            "fields": {}
+            "addField": addField
         };
 
     }
@@ -132,6 +181,8 @@ var pureForm = (function () {
             throw "pureForm::addForm >> `" + name + "` form already registered";
 
         __forms[name] = __buildForm();
+
+        return __forms[name];
 
     }
 

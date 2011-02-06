@@ -5,26 +5,6 @@
         <title>PureForm Functional Test</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="pureform.css" type="text/css" media="screen">
-        <script src="pureform.js" type="text/javascript"></script>
-        <script src="retrievers/form_input.js" type="text/javascript"></script>
-        <script src="types/boolean.js" type="text/javascript"></script>
-        <script src="types/float.js" type="text/javascript"></script>
-        <script src="types/integer.js" type="text/javascript"></script>
-        <script src="types/integerCeil.js" type="text/javascript"></script>
-        <script src="types/integerFloor.js" type="text/javascript"></script>
-        <script src="types/string.js" type="text/javascript"></script>
-        <script src="validators/limit.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            pureForm().addForm("details_form")
-            /*
-                .addField({ id: "first_name", type: "string", name: "First Name", validators: {
-                        "min": {"min": 3, "error": "%field_name% must be at least %min% characters long."},
-                        "max": {"max": 30, "error": "%field_name% must be less than %min% characters long."}
-                    }
-               })
-            /*
-            */
-        </script>
     </head>
     <body>
 
@@ -89,6 +69,32 @@
             </ul>
 
         </div>
+
+
+        <script src="pureform.js" type="text/javascript"></script>
+        <script src="retrievers/form_input.js" type="text/javascript"></script>
+        <script src="types/boolean.js" type="text/javascript"></script>
+        <script src="types/float.js" type="text/javascript"></script>
+        <script src="types/integer.js" type="text/javascript"></script>
+        <script src="types/integerCeil.js" type="text/javascript"></script>
+        <script src="types/integerFloor.js" type="text/javascript"></script>
+        <script src="types/string.js" type="text/javascript"></script>
+        <script src="validators/limit.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            pureForm().addForm("details_form")
+                .addField("first_name", {type: "string", name: "First Name", validators: {
+                        "min": {"min": 3, "error": "%field_name% must be at least %min% characters long."},
+                        "max": {"max": 30, "error": "%field_name% must be less than %min% characters long."}
+                    }
+               })
+                .addField("last_name", {type: "string", name: "First Name", validators: {
+                        "min": {"min": 3, "error": "%field_name% must be at least %min% characters long."},
+                        "max": {"max": 30, "error": "%field_name% must be less than %min% characters long."}
+                    }
+               })
+
+        </script>
+
 
         <!--
         <script type="text/javascript">

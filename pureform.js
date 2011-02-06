@@ -3,11 +3,52 @@ var pureForm = (function () {
     var __base_retrievers        = {};
     var __custom_retrievers      = {};
     var __custom_retriever_order = [];
+    var __forms                  = {};
     var __types                  = {};
     var __validators             = {};
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Build a field object used internally to organize the elements of a field.
+     *
+     * @return (object)
+     */
+    function __buildField () {
+
+       return {
+            "raw_value":  null,
+            "validators": {},
+            "value":      null
+        };
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Build a form object used internally to organize different forms.
+     *
+     * @return (object)
+     */
+    function __buildForm () {
+
+       return {
+            "fields": {}
+        };
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Build a retriever object used internally for element value retrieval.
+     *
+     * @param is_retriever_function   (function)
+     * @param retrieve_value_function (function)
+     *
+     * @return (object)
+     */
     function __buildRetriever (is_retriever_function, retrieve_value_function) {
 
        return {
@@ -67,6 +108,30 @@ var pureForm = (function () {
             throw "pureForm::_registerBaseRetriever >> `retrieve_value_function` param is of type `" + typeof retrieve_value_function + "` but must be a function";
 
         __base_retrievers[name] = __buildRetriever(is_retriever_function, retrieve_value_function);
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Register a new form.
+     *
+     * @param name (string)
+     *
+     * @return (object) Return form object to allow chaining.
+     */
+    function addForm (name) {
+
+        if (typeof name == "undefined")
+            throw "pureForm::addForm >> `name` param is required";
+
+        if (typeof name != "string")
+            throw "pureForm::addForm >> `name` param is of type `" + typeof name + "` but must be a string";
+
+        if (name in __forms)
+            throw "pureForm::addForm >> `" + name + "` form already registered";
+
+        __forms[name] = __buildForm();
 
     }
 
@@ -253,6 +318,7 @@ var pureForm = (function () {
 
         return {
             "_registerBaseRetriever": _registerBaseRetriever,
+            "addForm":                addForm,
             "registerType":           registerType,
             "registerRetriever":      registerRetriever,
             "registerValidator":      registerValidator,

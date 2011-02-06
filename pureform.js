@@ -100,8 +100,101 @@ var pureForm = (function () {
 
         // -------------------------------------------------------------------------------------------------------------
 
+        /**
+         * Retrieve a single field.
+         *
+         * @param id (string)
+         *
+         * @return (object)
+         */
+        function getField (id) {
+
+            if (typeof id == "undefined")
+                throw "pureForm/form::getField >> `id` param is required";
+
+            if (typeof id != "string")
+                throw "pureForm/form::getField >> `id` param is of type `" + typeof id + "` but must be a string";
+
+            if (id in __fields)
+                throw "pureForm/form::getField >> `" + id + "` field already registered";
+
+            return __fields[id];
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Retrieve all registered fields.
+         *
+         * @return (object)
+         */
+        function getFields () {
+
+            return __fields;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Set a field's raw value.
+         *
+         * @param id    (string)
+         * @param value (*)
+         */
+        function setFieldRawValue (id, value) {
+
+            if (typeof id == "undefined")
+                throw "pureForm/form::setFieldRawValue >> `id` param is required";
+
+            if (typeof id != "string")
+                throw "pureForm/form::setFieldRawValue >> `id` param is of type `" + typeof id + "` but must be a string";
+
+            if (id in __fields)
+                throw "pureForm/form::setFieldRawValue >> `" + id + "` field already registered";
+
+            if (typeof value == "undefined")
+                throw "pureForm/form::setFieldRawValue >> `value` param is required";
+
+            return __fields[id].raw_value = value;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Set a field's value.
+         *
+         * @param id    (string)
+         * @param value (*)
+         */
+        function setFieldValue (id, value) {
+
+            if (typeof id == "undefined")
+                throw "pureForm/form::setFieldValue >> `id` param is required";
+
+            if (typeof id != "string")
+                throw "pureForm/form::setFieldValue >> `id` param is of type `" + typeof id + "` but must be a string";
+
+            if (id in __fields)
+                throw "pureForm/form::setFieldValue >> `" + id + "` field already registered";
+
+            if (typeof value == "undefined")
+                throw "pureForm/form::setFieldValue >> `value` param is required";
+
+            return __fields[id].value = value;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
        return {
-            "addField": addField
+            "addField":         addField,
+            "getField":         getField,
+            "getFields":        getFields,
+            "setFieldRawValue": setFieldRawValue,
+            "setFieldValue":    setFieldValue
         };
 
     }
@@ -199,6 +292,30 @@ var pureForm = (function () {
             throw "pureForm::addForm >> `" + name + "` form already registered";
 
         __forms[name] = __buildForm();
+
+        return __forms[name];
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Get registered form object.
+     *
+     * @param name (string)
+     *
+     * @return (object) Return form object.
+     */
+    function getForm (name) {
+
+        if (typeof name == "undefined")
+            throw "pureForm::getForm >> `name` param is required";
+
+        if (typeof name != "string")
+            throw "pureForm::getForm >> `name` param is of type `" + typeof name + "` but must be a string";
+
+        if (!(name in __forms))
+            throw "pureForm::addForm >> `" + name + "` form not registered";
 
         return __forms[name];
 
@@ -388,6 +505,7 @@ var pureForm = (function () {
         return {
             "_registerBaseRetriever": _registerBaseRetriever,
             "addForm":                addForm,
+            "getForm":                getForm,
             "registerType":           registerType,
             "registerRetriever":      registerRetriever,
             "registerValidator":      registerValidator,

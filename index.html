@@ -92,8 +92,9 @@
                         "min": {"min": 3, "error": "%field_name% must be at least %min% characters long."},
                         "max": {"max": 30, "error": "%field_name% must be less than %min% characters long."}
                     }
-               })
+               });
 
+            console.log(pureForm().getForm("details_form").getFields());
         </script>
 
 

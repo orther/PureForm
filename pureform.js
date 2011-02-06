@@ -58,21 +58,39 @@ var pureForm = (function () {
                 throw "pureForm/form::addField >> There is no DOM element with ID `" + id + "`";
 
             if (typeof params == "undefined")
-                throw "pureForm/form::addField::" + id + " >> `params` param is required";
+                throw "pureForm/form::addField >> [" + id + "] `params` param is required";
 
             if (typeof params != "object")
-                throw "pureForm/form::addField::" + id + " >> `params` param is of type `" + typeof params + "` but must be an object";
+                throw "pureForm/form::addField >> [" + id + "] `params` param is of type `" + typeof params + "` but must be an object";
 
             if (typeof params.type != "string")
-                throw "pureForm/form::addField::" + id + " >> `params.type` param is required and must be a string";
+                throw "pureForm/form::addField >> [" + id + "] `params.type` param is required and must be a string";
 
             if (!(params.type in __types))
-                throw "pureForm/form::addField::" + id + " >> Field type `" + params.type + "` is not registered";
+                throw "pureForm/form::addField >> [" + id + "] Field type `" + params.type + "` is not registered";
+
+            var validators = {};
+
+            if ("validators" in params) {
+
+                if (typeof params.validators != "object")
+                    throw "pureForm/form::addField >> [" + id + "] `params.validators` param is of type `" + typeof params.validators + "` but must be an object";
+
+                for (validator_name in params.validators) {
+
+                    if (!(validator_name in __validators))
+                        throw "pureForm/form::addField >> [" + id + "] Field validator `" + validator_name + "` is not registered";
+
+                    validators[validator_name] = params.validators[validator_name];
+
+                }
+
+            }
 
            __fields[id] = {
                 "raw_value":  null,
                 "type":       params.type,
-                "validators": {},
+                "validators": validators,
                 "value":      null
             };
 

@@ -10,15 +10,143 @@ var pureForm = (function () {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Build a field object used internally to organize the elements of a field.
+     * Build a field object.
      *
      * @param id     (string)
      * @param params (object)
      *
      * @return (object)
      */
-    function __buildField (params) {
+    function __buildField (id, params) {
 
+        if (typeof id == "undefined")
+            throw "pureForm::__buildField >> `id` param is required";
+
+        if (typeof id != "string")
+            throw "pureForm::__buildField >> `id` param is of type `" + typeof id + "` but must be a string";
+
+        if (document.getElementById(id) === null)
+            throw "pureForm::__buildField >> There is no DOM element with ID `" + id + "`";
+
+        if (typeof params == "undefined")
+            throw "pureForm::__buildField >> [" + id + "] `params` param is required";
+
+        if (typeof params != "object")
+            throw "pureForm::__buildField >> [" + id + "] `params` param is of type `" + typeof params + "` but must be an object";
+
+        if (typeof params.type != "string")
+            throw "pureForm::__buildField >> [" + id + "] `params.type` param is required and must be a string";
+
+        if (!(params.type in __types))
+            throw "pureForm::__buildField >> [" + id + "] Field type `" + params.type + "` is not registered";
+
+        var __id               = id;
+        var __type             = params.type;
+        var __field_validators = {};
+        var __validator_errors = null;
+
+        if ("validators" in params) {
+
+            if (typeof params.validators != "object")
+                throw "pureForm/form::addField >> [" + id + "] `params.validators` param is of type `" + typeof params.validators + "` but must be an object";
+
+            for (validator_name in params.validators) {
+
+                console.log(__validators);
+                if (!(validator_name in __validators))
+                    throw "pureForm/form::addField >> [" + id + "] Field validator `" + validator_name + "` is not registered";
+
+                __validators[validator_name] = params.validators[validator_name];
+
+            }
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Get raw field value. This is the value retrieved from the element before it is type casted.
+         *
+         * @return (*)
+         */
+        function __getRawValue () {
+
+            var element = document.getElementById(__id);
+
+            if (element === null)
+                throw "pureForm/field::getRawValue >> There is no DOM element with ID `" + __id + "`";
+
+            return retrieveValue(element);
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Get type casted field value.
+         *
+         * @return (*)
+         */
+        function __getValue () {
+
+            var raw_value = __getRawValue();
+
+            return typeCast(__type, raw_value);
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Validate a field. If no validations errors return true, otherwise return false. All validation errors are
+         * stored.
+         *
+         * @return (boolean)
+         */
+        function __validate () {
+
+            var field_value = __getValue();
+
+            __validator_errors = {};
+
+            for (validator_name in __field_validators) {
+
+                var validation_errors = validate(field_value, validator_name, __field_validators[validator_name]);
+
+                if (validation_errors.length) {
+
+                    // there ARE validation errors
+                    __validator_errors[validator_name] = {
+                        "errors": validation_errors,
+                        "params": __field_validators[validator_name],
+                        "value":  value
+                    }
+
+                }
+
+            }
+
+            if (__validator_errors.length)
+                // there are NO validation errors
+                return true;
+
+            // there ARE validation errors
+            return false;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        return function () {
+
+            return {
+                "getRawValue": __getRawValue,
+                "getValue":    __getValue,
+                "validate":    __validate
+
+            };
+
+        };
 
     }
 
@@ -48,51 +176,13 @@ var pureForm = (function () {
             if (typeof id == "undefined")
                 throw "pureForm/form::addField >> `id` param is required";
 
-            if (typeof id != "string")
-                throw "pureForm/form::addField >> `id` param is of type `" + typeof id + "` but must be a string";
-
             if (id in __fields)
                 throw "pureForm/form::addField >> `" + id + "` field already registered";
-
-            if (document.getElementById(id) === null)
-                throw "pureForm/form::addField >> There is no DOM element with ID `" + id + "`";
 
             if (typeof params == "undefined")
                 throw "pureForm/form::addField >> [" + id + "] `params` param is required";
 
-            if (typeof params != "object")
-                throw "pureForm/form::addField >> [" + id + "] `params` param is of type `" + typeof params + "` but must be an object";
-
-            if (typeof params.type != "string")
-                throw "pureForm/form::addField >> [" + id + "] `params.type` param is required and must be a string";
-
-            if (!(params.type in __types))
-                throw "pureForm/form::addField >> [" + id + "] Field type `" + params.type + "` is not registered";
-
-            var validators = {};
-
-            if ("validators" in params) {
-
-                if (typeof params.validators != "object")
-                    throw "pureForm/form::addField >> [" + id + "] `params.validators` param is of type `" + typeof params.validators + "` but must be an object";
-
-                for (validator_name in params.validators) {
-
-                    if (!(validator_name in __validators))
-                        throw "pureForm/form::addField >> [" + id + "] Field validator `" + validator_name + "` is not registered";
-
-                    validators[validator_name] = params.validators[validator_name];
-
-                }
-
-            }
-
-           __fields[id] = {
-                "raw_value":  null,
-                "type":       params.type,
-                "validators": validators,
-                "value":      null
-            };
+            __fields[id] = __buildField(id, params);
 
             return this;
 

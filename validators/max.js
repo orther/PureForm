@@ -35,7 +35,7 @@ pureForm().registerValidator("max",
 
         switch (typeof value) {
             case "number":
-                if (typeof params.max == "number" && value < params.max)
+                if (typeof params.max == "number" && value > params.max)
                     error_msgs.push(params.max_error);
 
                 break;
@@ -43,7 +43,7 @@ pureForm().registerValidator("max",
             // ---------------------------------------------------------------------------------------------------------
 
             case "string":
-                if (typeof params.max == "number" && value.length < params.max)
+                if (typeof params.max == "number" && value.length > params.max)
                     error_msgs.push(params.max_error);
 
                 break;

@@ -169,8 +169,10 @@ var pureForm = (function () {
      */
     function __buildForm () {
 
-        var __fields           = {}
-        var __validator_errors = {};
+        var __fields              = {}
+        var __on_invalid_function = null;
+        var __on_valid_function   = null;
+        var __validator_errors    = {};
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -180,7 +182,7 @@ var pureForm = (function () {
          * @param id     (string)
          * @param params (object)
          *
-         * @return (object)
+         * @return (object) Return this form object to allow chaining.
          */
         function __addField (id, params) {
 
@@ -252,6 +254,50 @@ var pureForm = (function () {
         // -------------------------------------------------------------------------------------------------------------
 
         /**
+         * Assign function to be invoked when form validation fails.
+         *
+         * NOTE: The custom on_invalid_function is passed a single param which is an object of field validation errors.
+         *
+         * @param on_invalid_function (function)
+         *
+         * @return (object) Return this form object to allow chaining.
+         */
+        function __onInvalid (on_invalid_function) {
+
+            if (typeof on_invalid_function != "function")
+                throw "pureForm/form::__onInvalid >> `on_invalid_function` param is of type `" + typeof on_invalid_function + "` but must be a function";
+
+            __on_invalid_function = on_invalid_function;
+
+            return this;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Assign function to be invoked when form validation succeeds.
+         *
+         * NOTE: The custom on_valid_function is passed a single param which is an object of field values.
+         *
+         * @param on_invalid_function (function)
+         *
+         * @return (object) Return this form object to allow chaining.
+         */
+        function __onValid (on_valid_function) {
+
+            if (typeof on_valid_function != "function")
+                throw "pureForm/form::__onValid >> `on_valid_function` param is of type `" + typeof on_valid_function + "` but must be a function";
+
+            __on_valid_function = on_valid_function;
+
+            return this;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
          * Validate all form fields. If no validations errors return true, otherwise return false.
          *
          * @return (boolean)
@@ -275,6 +321,20 @@ var pureForm = (function () {
 
             }
 
+            if (fields_valid) {
+
+                if (typeof __on_valid_function == "function")
+                    // invoke custom onValid function
+                    __on_valid_function("field values object goes here");
+
+            } else {
+
+                if (typeof __on_invalid_function == "function")
+                    // invoke custom onInvalid function
+                    __on_invalid_function(__validator_errors);
+
+            }
+
             return fields_valid;
 
         }
@@ -286,6 +346,9 @@ var pureForm = (function () {
             "getField":            __getField,
             "getFields":           __getFields,
             "getValidationErrors": __getValidationErrors,
+            "onInvalid":           __onInvalid,
+            "onValid":             __onValid,
+            "onInvalid":           __onInvalid,
             "validate":            __validate
         };
 

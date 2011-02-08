@@ -43,6 +43,7 @@ var pureForm = (function () {
         var __id               = id;
         var __type             = params.type;
         var __field_validators = {};
+        var __validated_value  = null;
         var __validator_errors = {};
 
         if ("validators" in params) {
@@ -76,6 +77,19 @@ var pureForm = (function () {
                 throw "pureForm/field::getRawValue >> There is no DOM element with ID `" + __id + "`";
 
             return retrieveValue(element);
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Return validated value.
+         *
+         * @return (*)
+         */
+        function __getValidatedValue () {
+
+            return __validated_value;
 
         }
 
@@ -120,6 +134,7 @@ var pureForm = (function () {
             var field_valid = true;
             var field_value = __getValue();
 
+            __validated_value  = field_value;
             __validator_errors = {};
 
             for (validator_name in __field_validators) {
@@ -151,6 +166,7 @@ var pureForm = (function () {
 
             return {
                 "getRawValue":         __getRawValue,
+                "getValidatedValue":   __getValidatedValue,
                 "getValidationErrors": __getValidationErrors,
                 "getValue":            __getValue,
                 "validate":            __validate
@@ -304,7 +320,8 @@ var pureForm = (function () {
          */
         function __validate () {
 
-            var fields_valid = true;
+            var fields_valid     = true;
+            var validated_values = {};
 
             __validator_errors = {};
 
@@ -319,13 +336,15 @@ var pureForm = (function () {
 
                 }
 
+                validated_values[field] = __fields[field]().getValidatedValue();
+
             }
 
             if (fields_valid) {
 
                 if (typeof __on_valid_function == "function")
                     // invoke custom onValid function
-                    __on_valid_function("field values object goes here");
+                    __on_valid_function(validated_values);
 
             } else {
 

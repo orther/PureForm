@@ -43,7 +43,7 @@ var pureForm = (function () {
         var __id               = id;
         var __type             = params.type;
         var __field_validators = {};
-        var __validator_errors = null;
+        var __validator_errors = {};
 
         if ("validators" in params) {
 
@@ -55,7 +55,7 @@ var pureForm = (function () {
                 if (!(validator_name in __validators))
                     throw "pureForm/form::addField >> [" + id + "] Field validator `" + validator_name + "` is not registered";
 
-                __validators[validator_name] = params.validators[validator_name];
+                __field_validators[validator_name] = params.validators[validator_name];
 
             }
 
@@ -76,6 +76,19 @@ var pureForm = (function () {
                 throw "pureForm/field::getRawValue >> There is no DOM element with ID `" + __id + "`";
 
             return retrieveValue(element);
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Return validation errors object.
+         *
+         * @return (object)
+         */
+        function __getValidationErrors () {
+
+            return __validator_errors;
 
         }
 
@@ -104,6 +117,7 @@ var pureForm = (function () {
          */
         function __validate () {
 
+            var field_valid = true;
             var field_value = __getValue();
 
             __validator_errors = {};
@@ -118,14 +132,16 @@ var pureForm = (function () {
                     __validator_errors[validator_name] = {
                         "errors": validation_errors,
                         "params": __field_validators[validator_name],
-                        "value":  value
+                        "value":  field_value
                     }
+
+                    field_valid = false;
 
                 }
 
             }
 
-            if (__validator_errors.length)
+            if (!field_valid)
                 // there are NO validation errors
                 return true;
 
@@ -139,10 +155,10 @@ var pureForm = (function () {
         return function () {
 
             return {
-                "getRawValue": __getRawValue,
-                "getValue":    __getValue,
-                "validate":    __validate
-
+                "getRawValue":         __getRawValue,
+                "getValidationErrors": __getValidationErrors,
+                "getValue":            __getValue,
+                "validate":            __validate
             };
 
         };
@@ -529,7 +545,7 @@ var pureForm = (function () {
             throw "pureForm::validate >> `" + validator_name + "` validator is not registered";
 
         // run validator
-        return val_resp = __validators[validator_name](value, validator_params);
+        return __validators[validator_name](value, validator_params);
 
     }
 

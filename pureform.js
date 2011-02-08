@@ -169,7 +169,8 @@ var pureForm = (function () {
      */
     function __buildForm () {
 
-        var __fields = {}
+        var __fields           = {}
+        var __validator_errors = {};
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -181,7 +182,7 @@ var pureForm = (function () {
          *
          * @return (object)
          */
-        function addField (id, params) {
+        function __addField (id, params) {
 
             if (typeof id == "undefined")
                 throw "pureForm/form::addField >> `id` param is required";
@@ -207,7 +208,7 @@ var pureForm = (function () {
          *
          * @return (object)
          */
-        function getField (id) {
+        function __getField (id) {
 
             if (typeof id == "undefined")
                 throw "pureForm/form::getField >> `id` param is required";
@@ -229,7 +230,7 @@ var pureForm = (function () {
          *
          * @return (object)
          */
-        function getFields () {
+        function __getFields () {
 
             return __fields;
 
@@ -237,10 +238,55 @@ var pureForm = (function () {
 
         // -------------------------------------------------------------------------------------------------------------
 
-       return {
-            "addField":         addField,
-            "getField":         getField,
-            "getFields":        getFields
+        /**
+         * Return validation errors object which includes an entry for fields that have valdiation errors.
+         *
+         * @return (object)
+         */
+        function __getValidationErrors () {
+
+            return __validator_errors;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Validate all form fields. If no validations errors return true, otherwise return false.
+         *
+         * @return (boolean)
+         */
+        function __validate () {
+
+            var fields_valid = true;
+
+            __validator_errors = {};
+
+            for (field in __fields) {
+
+                if (!__fields[field]().validate()) {
+
+                    __validator_errors[field] = __fields[field]().getValidationErrors();
+
+
+                    fields_valid = false;
+
+                }
+
+            }
+
+            return fields_valid;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        return {
+            "addField":            __addField,
+            "getField":            __getField,
+            "getFields":           __getFields,
+            "getValidationErrors": __getValidationErrors,
+            "validate":            __validate
         };
 
     }

@@ -141,12 +141,7 @@ var pureForm = (function () {
 
             }
 
-            if (!field_valid)
-                // there are NO validation errors
-                return true;
-
-            // there ARE validation errors
-            return false;
+            return field_valid;
 
         }
 

@@ -52,7 +52,6 @@ var pureForm = (function () {
 
             for (validator_name in params.validators) {
 
-                console.log(__validators);
                 if (!(validator_name in __validators))
                     throw "pureForm/form::addField >> [" + id + "] Field validator `" + validator_name + "` is not registered";
 
@@ -227,64 +226,10 @@ var pureForm = (function () {
 
         // -------------------------------------------------------------------------------------------------------------
 
-        /**
-         * Set a field's raw value.
-         *
-         * @param id    (string)
-         * @param value (*)
-         */
-        function setFieldRawValue (id, value) {
-
-            if (typeof id == "undefined")
-                throw "pureForm/form::setFieldRawValue >> `id` param is required";
-
-            if (typeof id != "string")
-                throw "pureForm/form::setFieldRawValue >> `id` param is of type `" + typeof id + "` but must be a string";
-
-            if (id in __fields)
-                throw "pureForm/form::setFieldRawValue >> `" + id + "` field already registered";
-
-            if (typeof value == "undefined")
-                throw "pureForm/form::setFieldRawValue >> `value` param is required";
-
-            return __fields[id].raw_value = value;
-
-        }
-
-        // -------------------------------------------------------------------------------------------------------------
-
-        /**
-         * Set a field's value.
-         *
-         * @param id    (string)
-         * @param value (*)
-         */
-        function setFieldValue (id, value) {
-
-            if (typeof id == "undefined")
-                throw "pureForm/form::setFieldValue >> `id` param is required";
-
-            if (typeof id != "string")
-                throw "pureForm/form::setFieldValue >> `id` param is of type `" + typeof id + "` but must be a string";
-
-            if (id in __fields)
-                throw "pureForm/form::setFieldValue >> `" + id + "` field already registered";
-
-            if (typeof value == "undefined")
-                throw "pureForm/form::setFieldValue >> `value` param is required";
-
-            return __fields[id].value = value;
-
-        }
-
-        // -------------------------------------------------------------------------------------------------------------
-
        return {
             "addField":         addField,
             "getField":         getField,
-            "getFields":        getFields,
-            "setFieldRawValue": setFieldRawValue,
-            "setFieldValue":    setFieldValue
+            "getFields":        getFields
         };
 
     }

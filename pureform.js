@@ -204,8 +204,8 @@ var pureForm = (function () {
             if (typeof id != "string")
                 throw "pureForm/form::getField >> `id` param is of type `" + typeof id + "` but must be a string";
 
-            if (id in __fields)
-                throw "pureForm/form::getField >> `" + id + "` field already registered";
+            if (!(id in __fields))
+                throw "pureForm/form::getField >> `" + id + "` field is not registered";
 
             return __fields[id];
 

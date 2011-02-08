@@ -91,6 +91,9 @@
                         "min": {"min": 3, "error": "%field_name% must be at least %min% characters long."},
                         "max": {"max": 30, "error": "%field_name% must be less than %max% characters long."}
                     }
+                }).onValidateStart(function () {
+                    // called when form validate() is invoked before the fields are validated
+                    console.log("Validate Started");
                 }).onInvalid(function (field_validation_errors) {
                     // called when the form validation fails
                     console.log("onInvalid invoked");
@@ -99,11 +102,14 @@
                     // called when the form validation succeeds
                     console.log("onValid invoked");
                     console.log("field_values:", field_values);
-                })
+                }).onValidateFinish(function () {
+                    // called when form validate() is invoked after the fields are validated
+                    console.log("Validate Finished");
+                });
 
             // console.log(pureForm().getForm("details_form").getFields());
             // console.log(pureForm().getForm("details_form").getField("first_name")().validate());
-            console.log(pureForm().getForm("details_form").validate());
+            pureForm().getForm("details_form").validate();
         </script>
 
         <!--

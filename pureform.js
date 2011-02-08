@@ -185,10 +185,12 @@ var pureForm = (function () {
      */
     function __buildForm () {
 
-        var __fields              = {}
-        var __on_invalid_function = null;
-        var __on_valid_function   = null;
-        var __validator_errors    = {};
+        var __fields                      = {};
+        var __on_invalid_function         = null;
+        var __on_valid_function           = null;
+        var __on_validate_start_function  = null;
+        var __on_validate_finish_function = null;
+        var __validator_errors            = {};
 
         // -------------------------------------------------------------------------------------------------------------
 
@@ -296,7 +298,7 @@ var pureForm = (function () {
          *
          * NOTE: The custom on_valid_function is passed a single param which is an object of field values.
          *
-         * @param on_invalid_function (function)
+         * @param on_valid_function (function)
          *
          * @return (object) Return this form object to allow chaining.
          */
@@ -314,11 +316,54 @@ var pureForm = (function () {
         // -------------------------------------------------------------------------------------------------------------
 
         /**
+         * Assign function to be invoked when form validation starts.
+         *
+         * @param on_validate_start_function (function)
+         *
+         * @return (object) Return this form object to allow chaining.
+         */
+        function __onValidateStart (on_validate_start_function) {
+
+            if (typeof on_validate_start_function != "function")
+                throw "pureForm/form::__onValidateStart >> `on_validate_start_function` param is of type `" + typeof on_validate_start_function + "` but must be a function";
+
+            __on_validate_start_function = on_validate_start_function;
+
+            return this;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Assign function to be invoked when form validation starts.
+         *
+         * @param on_validate_finish_function (function)
+         *
+         * @return (object) Return this form object to allow chaining.
+         */
+        function __onValidateFinish (on_validate_finish_function) {
+
+            if (typeof on_validate_finish_function != "function")
+                throw "pureForm/form::__onValidateFinish >> `on_validate_finish_function` param is of type `" + typeof on_validate_finish_function + "` but must be a function";
+
+            __on_validate_finish_function = on_validate_finish_function;
+
+            return this;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
          * Validate all form fields. If no validations errors return true, otherwise return false.
          *
          * @return (boolean)
          */
         function __validate () {
+
+            if (typeof __on_validate_start_function == "function")
+                __on_validate_start_function();
 
             var fields_valid     = true;
             var validated_values = {};
@@ -354,6 +399,9 @@ var pureForm = (function () {
 
             }
 
+            if (typeof __on_validate_finish_function == "function")
+                __on_validate_finish_function();
+
             return fields_valid;
 
         }
@@ -367,6 +415,8 @@ var pureForm = (function () {
             "getValidationErrors": __getValidationErrors,
             "onInvalid":           __onInvalid,
             "onValid":             __onValid,
+            "onValidateStart":     __onValidateStart,
+            "onValidateFinish":    __onValidateFinish,
             "onInvalid":           __onInvalid,
             "validate":            __validate
         };

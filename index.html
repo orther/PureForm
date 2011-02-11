@@ -105,7 +105,9 @@
                 }).onValidateFinish(function () {
                     // called when form validate() is invoked after the fields are validated
                     console.log("Validate Finished");
-                });
+                })
+                .addTrigger("submit_1", "click")
+                .addTrigger("submit_2", "click");
 
             // console.log(pureForm().getForm("details_form").getFields());
             // console.log(pureForm().getForm("details_form").getField("first_name")().validate());

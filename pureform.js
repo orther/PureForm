@@ -222,6 +222,29 @@ var pureForm = (function () {
         // -------------------------------------------------------------------------------------------------------------
 
         /**
+         * Attach event listener to element to trigger form validation.
+         *
+         * @param element_id (string)
+         * @param event_type (string)
+         *
+         * @return (object) Returns this form object to allow chaining.
+         */
+        function __addTrigger (element_id, event_type) {
+
+            var element = document.getElementById(element_id);
+
+            if (element === null)
+                throw "pureForm/form::addTrigger >> Failed, element with id `" + button_id + "` doesn't exist.";
+
+            element.addEventListener(event_type, function () { __validate(); }, false);
+
+            return this;
+
+        };
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
          * Retrieve a single field.
          *
          * @param id (string)
@@ -410,6 +433,7 @@ var pureForm = (function () {
 
         return {
             "addField":            __addField,
+            "addTrigger":          __addTrigger,
             "getField":            __getField,
             "getFields":           __getFields,
             "getValidationErrors": __getValidationErrors,

@@ -40,11 +40,31 @@ var pureForm = (function () {
         if (!(params.type in __types))
             throw "pureForm::__buildField >> [" + id + "] Field type `" + params.type + "` is not registered";
 
-        var __id               = id;
-        var __type             = params.type;
-        var __field_validators = {};
-        var __validated_value  = null;
-        var __validator_errors = {};
+        var __id                  = id;
+        var __type                = params.type;
+        var __field_validators    = {};
+        var __on_invalid_function = null;
+        var __on_valid_function   = null;
+        var __validated_value     = null;
+        var __validator_errors    = {};
+
+        if ("onInvalid" in params) {
+
+            if (typeof params.onInvalid != "function")
+                throw "pureForm::__buildField >> [" + id + "] `params.onInalid` param is of type `" + typeof params.onInvalid + "` but must be a function";
+
+            __on_invalid_function = params.onInvalid;
+
+        }
+
+        if ("onValid" in params) {
+
+            if (typeof params.onValid != "function")
+                throw "pureForm::__buildField >> [" + id + "] `params.onValid` param is of type `" + typeof params.onValid + "` but must be a function";
+
+            __on_valid_function = params.onValid;
+
+        }
 
         if ("validators" in params) {
 
@@ -156,6 +176,18 @@ var pureForm = (function () {
 
             }
 
+            if (field_valid) {
+
+                if (typeof __on_valid_function == "function")
+                    __on_valid_function(__validated_value);
+
+            } else {
+
+                if (typeof __on_invalid_function == "function")
+                    __on_invalid_function(__validator_errors);
+
+            }
+
             return field_valid;
 
         }
@@ -186,6 +218,8 @@ var pureForm = (function () {
     function __buildForm () {
 
         var __fields                      = {};
+        var __on_field_invalid_function   = null;
+        var __on_field_valid_function     = null;
         var __on_invalid_function         = null;
         var __on_valid_function           = null;
         var __on_validate_start_function  = null;
@@ -295,6 +329,50 @@ var pureForm = (function () {
         // -------------------------------------------------------------------------------------------------------------
 
         /**
+         * Assign function to be invoked when field validation fails.
+         *
+         * NOTE: The custom on_invalid_function is passed two params which are the field_id and field validation errors.
+         *
+         * @param on_field_invalid_function (function)
+         *
+         * @return (object) Return this form object to allow chaining.
+         */
+        function __onFieldInvalid (on_field_invalid_function) {
+
+            if (typeof on_field_invalid_function != "function")
+                throw "pureForm/form::__onFieldInvalid >> `on_field_invalid_function` param is of type `" + typeof on_field_invalid_function + "` but must be a function";
+
+            __on_field_invalid_function = on_field_invalid_function;
+
+            return this;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
+         * Assign function to be invoked when field validation fails.
+         *
+         * NOTE: The custom on_valid_function is passed two params which are the field_id and field value.
+         *
+         * @param on_field_valid_function (function)
+         *
+         * @return (object) Return this form object to allow chaining.
+         */
+        function __onFieldValid (on_field_valid_function) {
+
+            if (typeof on_field_valid_function != "function")
+                throw "pureForm/form::__onFieldValid >> `on_field_valid_function` param is of type `" + typeof on_field_valid_function + "` but must be a function";
+
+            __on_field_valid_function = on_field_valid_function;
+
+            return this;
+
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+
+        /**
          * Assign function to be invoked when form validation fails.
          *
          * NOTE: The custom on_invalid_function is passed a single param which is an object of field validation errors.
@@ -395,16 +473,32 @@ var pureForm = (function () {
 
             for (field in __fields) {
 
+                var field_valid = true;
+
                 if (!__fields[field]().validate()) {
 
                     __validator_errors[field] = __fields[field]().getValidationErrors();
 
-
+                    field_valid  = false;
                     fields_valid = false;
 
                 }
 
                 validated_values[field] = __fields[field]().getValidatedValue();
+
+                if (field_valid) {
+
+                    if (typeof __on_field_valid_function == "function")
+                        // invoke custom onFieldValid function
+                        __on_field_valid_function(field, validated_values[field]);
+
+                } else {
+
+                    if (typeof __on_field_invalid_function == "function")
+                        // invoke custom onFieldInvalid function
+                        __on_field_invalid_function(field, __validator_errors[field]);
+
+                }
 
             }
 
@@ -437,6 +531,8 @@ var pureForm = (function () {
             "getField":            __getField,
             "getFields":           __getFields,
             "getValidationErrors": __getValidationErrors,
+            "onFieldInvalid":      __onFieldInvalid,
+            "onFieldValid":        __onFieldValid,
             "onInvalid":           __onInvalid,
             "onValid":             __onValid,
             "onValidateStart":     __onValidateStart,

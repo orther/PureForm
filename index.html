@@ -81,119 +81,58 @@
         <script src="validators/max.js" type="text/javascript"></script>
         <script src="validators/min.js" type="text/javascript"></script>
         <script type="text/javascript">
-            pureForm().addForm("details_form")
-                .addField("first_name", {type: "string", name: "First Name", validators: {
-                        "min": {"min": 3, "error": "%field_name% must be at least %min% characters long."},
-                        "max": {"max": 30, "error": "%field_name% must be less than %max% characters long."}
-                    }
-                })
-                .addField("last_name", {type: "string", name: "Last Name", validators: {
-                        "min": {"min": 3, "error": "%field_name% must be at least %min% characters long."},
-                        "max": {"max": 30, "error": "%field_name% must be less than %max% characters long."}
-                    }
-                }).onValidateStart(function () {
-                    // called when form validate() is invoked before the fields are validated
-                    console.log("Validate Started");
-                }).onInvalid(function (field_validation_errors) {
-                    // called when the form validation fails
-                    console.log("onInvalid invoked");
-                    console.log("field_validation_errors:", field_validation_errors);
-                }).onValid(function (field_values) {
-                    // called when the form validation succeeds
-                    console.log("onValid invoked");
-                    console.log("field_values:", field_values);
-                }).onValidateFinish(function () {
-                    // called when form validate() is invoked after the fields are validated
-                    console.log("Validate Finished");
-                })
-                .addTrigger("submit_1", "click")
-                .addTrigger("submit_2", "click");
+        var details = document.getElementById("submission-details");
 
+        pureForm().addForm("details_form")
+            .addField("first_name", {type: "string", name: "First Name", validators: {
+                    "min": {"min": 3, "error": "%field_name% must be at least %min% characters long."},
+                    "max": {"max": 30, "error": "%field_name% must be less than %max% characters long."}
+                },
+                onValid: function (field_value) {
+                    details.innerHTML += "<li>Sweet name: " + field_value + "</li>";
+                }
+            })
+            .addField("last_name", {type: "string", name: "Last Name", validators: {
+                    "min": {"min": 3, "error": "%field_name% must be at least %min% characters long."},
+                    "max": {"max": 30, "error": "%field_name% must be less than %max% characters long."}
+                },
+                onInvalid: function (field_validator_errors) {
+                    var error_messages = [];
+                    for (validator in field_validator_errors)
+                        error_messages.push(validator + ": " + field_validator_errors[validator].errors[0]);
+                    details.innerHTML += "<li>Last Name Sucks Because: <ul><li>" + error_messages.join("</li><li>") + "</li></ul></li>";
+                }
+            }).onValidateStart(function () {
+                // called when form validate() is invoked before the fields are validated
+                details.innerHTML = "<li><h3>Validation Started</h3></li>";
+            }).onFieldInvalid(function (field_id, field_validation_error) {
+                // called when per field on validation fails
+                details.innerHTML += "<li>onFieldInvalid invoked<ul>";
+                details.innerHTML += "<li>field_id: " + field_id + "</li>";
+                details.innerHTML += "<li>field_validation_error: " + field_validation_error + "</li></ul></li>";
+            }).onFieldValid(function (field_id, field_value) {
+                // called when per field on validation succeeds
+                details.innerHTML += "<li>onFieldValid invoked<ul>";
+                details.innerHTML += "<li>field_id: " + field_id + "</li>";
+                details.innerHTML += "<li>field_value: " + field_value + "</li></ul></li>";
+            }).onInvalid(function (field_validation_errors) {
+                // called when the form validation fails
+                details.innerHTML += "<li>onInvalid invoked</li>";
+                console.log("field_validation_errors:", field_validation_errors);
+            }).onValid(function (field_values) {
+                // called when the form validation succeeds
+                details.innerHTML += "<li>onValid invoked</li>";
+                console.log("field_values:", field_values);
+            }).onValidateFinish(function () {
+                // called when form validate() is invoked after the fields are validated
+                details.innerHTML += "<li><h3>Validation Finished</h3></li>";
+            })
+            .addTrigger("submit_1", "click")
+            .addTrigger("submit_2", "click");
             // console.log(pureForm().getForm("details_form").getFields());
             // console.log(pureForm().getForm("details_form").getField("first_name")().validate());
-            pureForm().getForm("details_form").validate();
+            // pureForm().getForm("details_form").validate();
         </script>
-
-        <!--
-        <script type="text/javascript">
-        var edit_user_form = pureForm().create("edit_user").registerValidator("coolName", function (value, raw_value, type) {
-            return (field.getValue() == "Brandon");
-        }).addFields({
-            /*
-            "first_name": {type: "string", validators: ["coolName", ["limit", ], ]},
-            "last_name":  {type: "string"},
-            "is_macking": {type: "boolean"},
-            "cool_level": {type: "integer"},
-            */
-            "cash_flow":  {type: "float"}
-        }).addAggregates({
-            "full_name": { aggregateFunction: function (formValues) {
-                return {
-                    "full_name_string": formValues("first_name") + " " + formValues("last_name"),
-                    "first_name":       formValues("first_name"),
-                    "last_name":        formValues("last_name")
-                }
-            }}
-        }).onSubmit(function () {
-            // triggered immediatly when form submitted
-            var details = document.getElementById("submission-details");
-
-            details.innerHTML = "<li>onSubmit Called</li>";
-
-        }).onValid(function (fields) {
-            // triggered after validation if all fields are valid
-            var details = document.getElementById("submission-details");
-
-            var field_details = "<ul>";
-            for (field_name in fields) {
-
-                // console.log(fields[field_name]());
-                field_details += "<li>" + field_name + ": isValid(" + fields[field_name]().isValid() + ")</li>";
-
-            }
-            field_details += "</ul>";
-
-            details.innerHTML += "<li>onValid Called: " + field_details + "</li>";
-
-        }).onInvalid(function () {
-            // triggered after validation if invalid field(s)
-            var details = document.getElementById("submission-details");
-
-            details.innerHTML += "<li>onInvalid Called</li>";
-
-        }).onSubmitComplete(function () {
-            // triggered after onValid or onInvalid.
-            var details = document.getElementById("submission-details");
-
-            details.innerHTML += "<li>onSubmitComplete Called</li>";
-
-        }).attachSubmitButtons(["submit_1","submit_2"]);
-
-        function ct () {
-
-            return (function () {
-
-                var __test = null;
-
-                function get (value) {
-
-                    return __test;
-
-                }
-
-                function set (value) {
-
-                    __test = value;
-
-                }
-
-                return {"get": get, "set": set}
-
-            })();
-
-        }
-        </script>
-        -->
 
     </body>
 </html>

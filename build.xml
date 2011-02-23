@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="PureFormBuild" default="build" basedir=".">
+	<!-- Setup classpath for js-build-tools ant tasks -->
+	<path id="js-build-tasks.classpath">
+		<pathelement location="."/>
+
+		<fileset dir="build/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<!-- Register new js-build-tools ant tasks -->
+	<taskdef name="preprocess" classname="com.moxiecode.ant.tasks.PreProcessTask" classpathref="js-build-tasks.classpath" loaderref="js-build-tasks.classpath.loader" />
+	<taskdef name="yuicompress" classname="com.moxiecode.ant.tasks.YuiCompressTask" classpathref="js-build-tasks.classpath" loaderref="js-build-tasks.classpath.loader" />
+	<taskdef name="moxiedoc" classname="com.moxiecode.ant.tasks.MoxieDocTask" classpathref="tasks.classpath" loaderref="js-build-tasks.classpath.loader" />
+
+	<!-- Setup default build target -->
+	<target name="build">
+		<!-- Concat multuple JS files together -->
+		<concat destfile="pureform.combined.js">
+			<fileset dir="src" includes="pureform.js" />
+			<fileset dir="src/retrievers" includes="*.js" />
+			<fileset dir="src/types" includes="*.js" />
+			<fileset dir="src/validators" includes="*.js" />
+		</concat>
+
+		<!-- Process pre proccesing instuctions like #if/#endif etc -->
+		<!-- <preprocess infile="pureform.combined.js" outfile="example.preprocessed.js" defines="value1,value2" /> -->
+
+		<!-- Compress the file using the YUI Compressor -->
+		<yuicompress infile="pureform.combined.js" outfile="pureform.min.js" />
+	</target>
+
+	<!-- Generate JS documentation -->
+	<target name="moxiedoc" depends="" description="Generates HTML documentation out of js source">
+		<moxiedoc outdir="docs" msintellisense="docs\model.js" eventclass="tinymce.util.Dispatcher" templatedir="..\templates" title="Example API">
+			<fileset dir=".">
+				<include name="**/*.js" />
+			</fileset>
+		</moxiedoc>
+	</target>
+</project>

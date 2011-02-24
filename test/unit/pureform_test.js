@@ -1,15 +1,14 @@
-TestCase("PureForm", {
-    setUp: function () {
-        this.form = pureForm().addForm("test_form");
-    },
+PureFormTestCase = TestCase("PureForm");
 
-    "test created form": function () {
-        assertObject(this.form);
-    },
+PureFormTestCase.prototype.testCreateForm = function () {
+    assertObject(pureForm().addForm("test_form"));
+};
 
-    "test addField": function () {
-        assertNoException(this.form.addField("first_name", {type: "string", name: "First Name"}));
-    }
+PureFormTestCase.prototype.testGetForm = function () {
+    assertObject(pureForm().getForm("test_form"));
+};
 
-});
-
+PureFormTestCase.prototype.testAddField = function () {
+    /*:DOC += <input id="first_name" value="Brandon" /> */
+    assertObject(pureForm().getForm("test_form").addField("first_name", {type: "string", name: "First Name"}));
+};
